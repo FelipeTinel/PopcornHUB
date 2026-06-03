@@ -20,7 +20,6 @@ class Content {
             gender = gen;
             year = y;
             next = nullptr;
-            previous = nullptr;
 
         }
 
