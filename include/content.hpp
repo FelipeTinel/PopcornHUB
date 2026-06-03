@@ -8,7 +8,7 @@ class Content {
     std::string title, type, gender;
     int year;
     long views;
-    Content * next, * previous;
+    Content * next;
 
     public:
 
