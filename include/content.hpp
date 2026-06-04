@@ -8,7 +8,6 @@ class Content {
     std::string title, type, gender;
     int year;
     long views;
-    Content * next;
 
     public:
 
@@ -19,7 +18,6 @@ class Content {
             type = ty;
             gender = gen;
             year = y;
-            next = nullptr;
 
         }
 

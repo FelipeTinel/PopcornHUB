@@ -1,9 +1,12 @@
 #pragma once
 
+#include <iostream>
+
+template <typename T>
 struct Node {
 
-    int info = 0;
-    Node * left, * right;
+    T content;
+    Node * next
 
 };
 
