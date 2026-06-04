@@ -7,12 +7,14 @@
 #include "type.hpp"
 class Content {
 
-    std::string title;
-    Type type;
-    Genre genre;
-    int year;
-    long views;
-    float rating;
+    private:
+
+        std::string title;
+        Type type;
+        Genre genre;
+        int year;
+        long views;
+        float rating;
 
     public:
 
