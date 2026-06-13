@@ -3,22 +3,19 @@
 #include <iostream>
 #include <string>
 
-#include "node2.hpp"
-
-template <typename T>
+#include "node_tree.hpp"
 class BinaryTree {
 
     private:
 
-        Node2<T> * root;
+        NodeTree * root;
 
     public:
     
         BinaryTree (): root(nullptr) {}
 
-    
-        void insert(T info);
-        bool search (T info);
-        void remove (T info);
+        void insert(std::string info);
+        bool search (std::string info);
+        void remove (std::string info);
 
 };

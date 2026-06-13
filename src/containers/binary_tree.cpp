@@ -1,23 +1,21 @@
 #include <iostream>
+#include <string>
 
-#include "include/binary_tree.hpp"
+#include "include/containers/binary_tree.hpp"
 
-template <typename T>
-void BinaryTree<T>::insert(T info) {
+void BinaryTree::insert(std::string info) {
 
 
 
 }
 
-template <typename T>
-bool BinaryTree<T>::search(T info) {
+bool BinaryTree::search(std::string info) {
 
     
 
 }
 
-template <typename T>
-void BinaryTree<T>::remove(T info) {
+void BinaryTree::remove(std::string info) {
 
     
 
