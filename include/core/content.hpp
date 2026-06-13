@@ -20,16 +20,6 @@ class Content {
 
     public:
 
-        Content (std::string t, Type ty, Genre g, int y, long v, float r):
-
-            id(next_id++),
-            title(t),
-            type(ty),
-            genre(g),
-            year(y),
-            views(v),
-            rating(r)
-
-        {}
+        Content (std::string t, Type ty, Genre g, int y, long v, float r);
 
 };
