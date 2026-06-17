@@ -4,7 +4,7 @@
 
 #include "data_manager.hpp"
 
-class ContentManager : public DataManager {
+class ContentManager : public DataManager<Content> {
 
     private:
 
@@ -13,6 +13,11 @@ class ContentManager : public DataManager {
     public:
 
         ContentManager (std::string & data_file) : DataManager(data_file) {}
+
+        void write_data(Content & content) override;
+        void update_data (int id, Content & content) override;
+        void remove_data(int id) override;
+        Content * get_data(int id) override;
 
 
 };

@@ -1,10 +1,11 @@
-#include <fstream>
 #include <iostream>
+#include <string>
+#include <fstream>
 
-#include "services/data_manager.hpp"
+#include "services/content_manager.hpp"
 #include "core/content.hpp"
 
-void DataManager::content_frame (std::ofstream & file, Content & content) {
+void ContentManager::content_frame (std::ofstream & file, Content & content) {
 
     file_frame(file, content.get_id());
     file_frame(file, content.get_title());
@@ -17,7 +18,7 @@ void DataManager::content_frame (std::ofstream & file, Content & content) {
 
 }
 
-void DataManager::write_content (Content & content) {
+void ContentManager::write_data (Content & content) {
 
     std::ofstream write_file(data_file, std::ios::app);
 
@@ -32,7 +33,8 @@ void DataManager::write_content (Content & content) {
 
 }
 
-void DataManager::update_content (int id, Content & content) {
+
+void ContentManager::update_data (int id, Content & content) {
 
     std::ofstream update_file(data_file);
 

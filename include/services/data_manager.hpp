@@ -4,24 +4,25 @@
 #include <fstream>
 #include <string>
 
-#include "core/content.hpp"
-
+template <typename T>
 class DataManager {
 
     protected:
 
         std::string data_file;
 
-        template <typename T> 
-        void file_frame (std::ofstream & file, T info) { file << info << ";"; }
+        template <typename U> 
+        void file_frame (std::ofstream & file, U info) { file << info << ";"; }
 
     public:
 
-        DataManager (const std::string & data_file): data_file(data_file) {}
+        explicit DataManager (const std::string & data_file): data_file(data_file) {}
 
-        void write_content(Content & content);
-        void update_content (int id, Content & content);
-        void remove_content(int id);
-        Content * get_content (int id);
+        virtual void write_data(T & data) = 0;
+        virtual void update_data (int id, T & data) = 0;
+        virtual void remove_data(int id) = 0;
+        virtual T * get_data(int id) = 0;
+
+        virtual ~ DataManager() = default;
 
 };
