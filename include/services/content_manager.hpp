@@ -3,19 +3,20 @@
 #include <string>
 
 #include "data_manager.hpp"
+#include "core/content.hpp"
 
 class ContentManager : public DataManager<Content> {
 
     private:
 
-        void content_frame (std::ofstream & file, Content & content);
+        void content_frame (std::ofstream & file, const Content & content);
 
     public:
 
-        ContentManager (std::string & data_file) : DataManager(data_file) {}
+        explicit ContentManager (const std::string & data_file) : DataManager(data_file) {}
 
-        void write_data(Content & content) override;
-        void update_data (int id, Content & content) override;
+        void write_data(const Content & content) override;
+        void update_data (int id, const Content & content) override;
         void remove_data(int id) override;
         Content * get_data(int id) override;
 
