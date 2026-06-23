@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "services/content_manager.hpp"
 #include "core/content.hpp"
@@ -55,21 +56,41 @@ void ContentManager::remove_data(int id) {
 Content * ContentManager::get_data(int id) {
     
     std::ifstream read_content (data_file);
-    Content * content;
+    
     std::string search_id;
-
+    
     while (std::getline(read_content, search_id)) {
-
-        if (std::getline(read_content, search_id, ';') - 0 == id) {
-
-            std::getline(read_content,search_id, ';')
-
-        }
         
+        std::stringstream ss(search_id);
+        std::string camp;
+        
+        if (std::getline(read_content, search_id, ';')) {
+            
+            int actual_id = std::stoi(camp);
+            
+            if (actual_id == id) {
+                
+                std::string title, str_type, str_genre, str_year, str_views, str_rating;
+                
+                std::getline(ss, title, ';');
+                std::getline(ss, str_type, ';');
+                std::getline(ss, str_genre, ';');
+                std::getline(ss, str_year, ';');
+                std::getline(ss, str_views, ';');
+                std::getline(ss, str_rating, ';');
 
+                Type type = static_cast<Type>(std::stoi(str_type));
+                Genre genre = static_cast<Genre>(std::stoi(str_genre));
+                int year = std::stoi(str_year);
+                long views = std::stol(str_views);
+                float rating = std::stof(str_rating);
 
+                return new Content(title, type, genre, year, views, rating);
+
+            }
+        } 
     }
-
+    
     return nullptr; 
 }
 
