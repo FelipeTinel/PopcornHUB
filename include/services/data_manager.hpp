@@ -1,21 +1,28 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <string>
 
-#include "core/content.hpp"
-
+template <typename T>
 class DataManager {
 
-    std::string file;
+    protected:
+
+        std::string data_file;
+
+        template <typename U> 
+        void file_frame (std::ofstream & file, U info) { file << info << ";"; }
 
     public:
 
-        DataManager (const std::string & file): file(file) {}
+        explicit DataManager (const std::string & data_file): data_file(data_file) {}
 
-        void write_content(const Content & content);
-        void update_content (int id);
-        void remove_content(int id);
-        Content * get_content (int id);
+        virtual void write_data(const T & data) = 0;
+        virtual void update_data (int id, const T & data) = 0;
+        virtual void remove_data(int id) = 0;
+        virtual T * get_data(int id) = 0;
+
+        virtual ~ DataManager() = default;
 
 };

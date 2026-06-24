@@ -10,5 +10,12 @@ add_executable(
     test_data_management
     tests/test_data_management.cpp
     src/core/content.cpp
-    src/services/data_manager.cpp
+    src/services/content_manager.cpp
+    )
+
+add_executable(
+    test_get_data
+    tests/test_get_data.cpp
+    src/core/content.cpp
+    src/services/content_manager.cpp
     )
