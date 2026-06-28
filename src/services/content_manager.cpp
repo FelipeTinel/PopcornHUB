@@ -34,57 +34,6 @@ void ContentManager::write_data (const Content & content) {
 
 }
 
-// void ContentManager::update_data (int id, const Content & content) {
-
-//     std::ofstream update_file(data_file);
-
-//     if (update_file.is_open()) {
-
-//         content_frame(update_file, content);
-//         update_file.close();
-
-//     } else {
-//         std::cout << "Erro, não foi possível atualizar o conteúdo" << std::endl;
-//     }
-
-// }
-
-// void ContentManager::remove_data(int id) {
-    
-//     std::fstream delete_content(data_file);
-
-//     std::string search_id;
-
-//     if (!delete_content.is_open()) {
-
-//         std::cerr << "Arquivo não encontrado" << std::endl;
-//         return;
-
-//     }
-
-//     while (std::getline(delete_content, search_id)) {
-
-//         std::stringstream ss(search_id);
-//         std::string camp;
-
-//         while (std::getline(ss, camp, ';')) {
-
-//             int actual_id = std::stoi(camp);
-
-//             if (actual_id == id) {
-
-//                 ss << "" << std::endl;
-
-//             }
-
-
-//         }
-
-//     }
-
-
-// }
-
 Content * ContentManager::get_data(int id) {
     
     std::ifstream read_content (data_file);
