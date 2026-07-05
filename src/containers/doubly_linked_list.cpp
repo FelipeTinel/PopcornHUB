@@ -44,3 +44,21 @@ Content DoublyLinkedList::pop (const Content &content) {
     return content;
 
 }
+
+void DoublyLinkedList::go_next () {
+
+    if (current == nullptr) return;
+
+    if (current->next == nullptr) current = head;
+    else current = current->next;
+
+}
+
+void DoublyLinkedList::go_previous() {
+
+    if (current == nullptr) return;
+
+    if (current->previous == nullptr) current = tail;
+    else current = current->previous;
+
+}
