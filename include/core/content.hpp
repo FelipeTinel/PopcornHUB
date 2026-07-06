@@ -20,6 +20,8 @@ class Content {
 
     public:
 
+        Content();
+
         Content (std::string title, Type type, Genre genre, int year, long views, float rating);
 
         int get_id() const;
