@@ -6,7 +6,7 @@
 
 struct Node {
 
-    Content content;
+    Content* content;
     Node * next;
 
 };

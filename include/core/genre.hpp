@@ -11,5 +11,6 @@ enum class Genre {
     SUSPENSE,
     DRAMA,
     SCIENCE_FICTION,
+    SLICE_OF_LIFE,
 
 };

@@ -17,6 +17,7 @@ class Content {
         Genre genre;
         long views;
         float rating;
+        double score;
 
     public:
 
@@ -29,6 +30,7 @@ class Content {
         int get_year() const;
         long get_views() const;
         float get_rating() const;
+        double get_score() const;
 
         void set_title(std::string title);
         void set_type(Type type);
@@ -36,5 +38,6 @@ class Content {
         void set_year(int year);
         void add_views(long views);
         void set_rating(float rating);
+        void set_score(double score);
 
 };

@@ -11,6 +11,7 @@ add_executable(
     tests/test_data_management.cpp
     src/core/content.cpp
     src/services/content_manager.cpp
+    src/containers/binary_tree.cpp
     )
 
 add_executable(
@@ -18,4 +19,14 @@ add_executable(
     tests/test_get_data.cpp
     src/core/content.cpp
     src/services/content_manager.cpp
+    src/containers/binary_tree.cpp
+    )
+
+add_executable(
+    test_recommendation
+    tests/test_recommendation.cpp
+    src/core/content.cpp
+    src/services/content_manager.cpp
+    src/containers/binary_tree.cpp
+    src/core/score_calculator.cpp
     )
