@@ -20,6 +20,6 @@ class DoublyLinkedList {
         void go_previous ();
         
         Content get_current () const;
-        Content remove_current () const;
+        Content remove_current ();
 
 };

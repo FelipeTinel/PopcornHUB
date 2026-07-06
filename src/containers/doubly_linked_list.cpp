@@ -70,3 +70,16 @@ Content DoublyLinkedList::get_current() const {
 
 }
 
+Content DoublyLinkedList::remove_current() {
+
+    if (current == nullptr) return Content();
+
+    if (current->previous != nullptr) current->previous->next = current->next;
+    if (current->next != nullptr) current->next->previous = current->previous;
+
+    Node * temp = current;
+    current = current->next;
+    delete temp;
+
+}
+
