@@ -11,11 +11,12 @@ class ContentManager : public DataManager<Content> {
     private:
 
         void content_frame (std::ofstream & file, const Content & content);
+
     public:
 
-        explicit ContentManager (const std::string & data_file) : DataManager<Content>(data_file) {}
+        ContentManager (const std::string & data_file) : DataManager<Content>(data_file) {}
 
-        void save_data(DoublyLinkedList & list) override;
-        void load_data(DoublyLinkedList & list) override;
+        void save_data() override;
+        void load_data() override;
 
 };
