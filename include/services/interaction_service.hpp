@@ -19,6 +19,6 @@ class InteractionService {
         InteractionService(AuthService & auth, DoublyLinkedList<Comment> & comments);
 
         void watch_content(Content & content);
-
         bool add_comment_to_content(Content& content, const std::string & text);
+        void rate_content(Content & content);
 };
