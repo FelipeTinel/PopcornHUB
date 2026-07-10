@@ -6,7 +6,7 @@ int User::next_id = 1;
 
 User::User (): id(0), name(""), password("") {}
 
-User::User(std::string _name, std::string _password): id(next_id), name(_name), password(_password) {}
+User::User(std::string _name, std::string _password): id(next_id++), name(_name), password(_password) {}
 
 User::User(int id, std::string _name, std::string _password): id(id), name(_name), password(_password) 
 {
