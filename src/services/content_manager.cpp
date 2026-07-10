@@ -39,8 +39,45 @@ void ContentManager::save_data (const DoublyLinkedList<Content> & list) {
 
 }
 
-Node<Content> * ContentManager::load_data(DoublyLinkedList<Content> & list) {
+void ContentManager::load_data(DoublyLinkedList<Content> & list) {
     
-    
+    std::ifstream file(data_file);
+    if (!file.is_open()) {
+        std::cout << "Arquivo não encontrado." << std::endl;
+        return;
+    }
 
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+
+        std::stringstream ss(line);
+        std::string field;
+
+        std::getline(ss, field, ';');
+        int id = std::stoi(field);
+
+        std::string title;
+        std::getline(ss, title, ';');
+
+        std::getline(ss, field, ';');
+        Type type = static_cast<Type>(std::stoi(field));
+
+        std::getline(ss, field, ';');
+        Genre genre = static_cast<Genre>(std::stoi(field));
+
+        std::getline(ss, field, ';');
+        int year = std::stoi(field);
+
+        std::getline(ss, field, ';');
+        long views = std::stol(field);
+
+        std::getline(ss, field, ';');
+        float rating = std::stof(field);
+
+        Content content(id, title, type, genre, year, views, rating);
+        list.insert(content);
+    }
+
+    file.close();
 }

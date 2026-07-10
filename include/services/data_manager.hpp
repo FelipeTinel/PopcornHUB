@@ -21,7 +21,7 @@ class DataManager {
         explicit DataManager (const std::string & data_file): data_file(data_file) {}
 
         virtual void save_data(const DoublyLinkedList<T> & list) = 0;
-        virtual Node<T> * load_data(DoublyLinkedList<T> & list) = 0;
+        virtual void load_data(DoublyLinkedList<T> & list) = 0;
     
         virtual ~ DataManager() = default;
 
