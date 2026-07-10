@@ -19,7 +19,7 @@ void ContentManager::content_frame (std::ofstream & file, const Content & conten
 
 }
 
-void ContentManager::write_data (const Content & content) {
+void ContentManager::save_data (const Content & content) {
 
     std::ofstream write_file(data_file, std::ios::app);
 
@@ -34,7 +34,7 @@ void ContentManager::write_data (const Content & content) {
 
 }
 
-Content * ContentManager::get_data(int id) {
+Content * ContentManager::load_data(int id) {
     
     std::ifstream read_content (data_file);
     

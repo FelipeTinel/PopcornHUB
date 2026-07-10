@@ -18,8 +18,8 @@ class DataManager {
 
         explicit DataManager (const std::string & data_file): data_file(data_file) {}
 
-        virtual void write_data(const T & data) = 0;
-        virtual T * get_data(int id) = 0;
+        virtual void save_data(const T & data) = 0;
+        virtual T * load_data(int id) = 0;
 
         virtual ~ DataManager() = default;
 

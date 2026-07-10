@@ -15,10 +15,8 @@ class ContentManager : public DataManager<Content> {
 
         explicit ContentManager (const std::string & data_file) : DataManager(data_file) {}
 
-        void write_data(const Content & content) override;
-        void update_data (int id, const Content & content) override;
-        void remove_data(int id) override;
-        Content * get_data(int id) override;
+        void save_data(const Content & content) override;
+        Content * load_data(int id) override;
 
 
 };
