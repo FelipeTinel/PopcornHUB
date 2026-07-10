@@ -5,6 +5,7 @@
 
 #include "data_manager.hpp"
 #include "core/user.hpp"
+#include "containers/doubly_linked_list.hpp"
 
 class UserManager : DataManager<User> {
 

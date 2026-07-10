@@ -5,6 +5,7 @@
 
 #include "data_manager.hpp"
 #include "core/comment.hpp"
+#include "containers/doubly_linked_list.hpp"
 
 class CommentManager : DataManager<Comment> {
 
