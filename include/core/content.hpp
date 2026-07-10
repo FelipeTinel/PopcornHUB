@@ -17,12 +17,13 @@ class Content {
         Genre genre;
         long views;
         float rating;
+        int rating_count;
 
     public:
 
         Content();
         Content (std::string title, Type type, Genre genre, int year, long views, float rating);
-        Content(int id, std::string title, Type type, Genre genre, int year, long views, float rating);
+        Content(int id, std::string title, Type type, Genre genre, int year, long views, float rating, int rating_count);
 
         int get_id() const;
         std::string get_title() const;
@@ -31,6 +32,7 @@ class Content {
         int get_year() const;
         long get_views() const;
         float get_rating() const;
+        int get_rating_count() const;
 
         void set_title(std::string title);
         void set_type(Type type);
@@ -38,5 +40,6 @@ class Content {
         void set_year(int year);
         void add_views(long views);
         void set_rating(float rating);
+        void add_rating (float new_rating);
 
 };
