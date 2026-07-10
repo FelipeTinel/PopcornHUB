@@ -1,9 +1,13 @@
+#pragma once
+
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 #include "data_manager.hpp"
 #include "core/content.hpp"
+#include "containers/doubly_linked_list.hpp"
 
 class ContentManager : public DataManager<Content> {
 
@@ -13,12 +17,9 @@ class ContentManager : public DataManager<Content> {
 
     public:
 
-        explicit ContentManager (const std::string & data_file) : DataManager(data_file) {}
+        ContentManager (const std::string & data_file) : DataManager<Content>(data_file) {}
 
-        void write_data(const Content & content) override;
-        void update_data (int id, const Content & content) override;
-        void remove_data(int id) override;
-        Content * get_data(int id) override;
-
+        void save_data(const DoublyLinkedList<Content> & list) override;
+        void load_data(DoublyLinkedList<Content> & list) override;
 
 };

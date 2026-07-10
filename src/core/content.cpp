@@ -4,6 +4,8 @@
 
 int Content::next_id = 1;
 
+Content::Content (): id(0), title(""), type(Type::MOVIE), genre(Genre::ACTION), year(0), views(0), rating(0.0f) {}
+
 Content::Content (std::string title, Type type, Genre genre, int year, long views, float rating):
 
     id(next_id++),
@@ -15,6 +17,20 @@ Content::Content (std::string title, Type type, Genre genre, int year, long view
     rating((rating <= 5 && rating >= 0) ? rating : 0)
 
 {}
+
+Content::Content (int id, std::string title, Type type, Genre genre, int year, long views, float rating):
+
+    id(id),
+    title(title),
+    type(type),
+    genre(genre),
+    year(year),
+    views(views),
+    rating((rating <= 5 && rating >= 0) ? rating : 0)
+
+{
+    if (id >= next_id) next_id = id + 1;
+}
 
 int Content::get_id() const { return id; }
 std::string Content::get_title() const { return title; }

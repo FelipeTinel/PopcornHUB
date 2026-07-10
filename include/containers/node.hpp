@@ -2,13 +2,12 @@
 
 #include <iostream>
 
-#include "core/content.hpp"
-
+template <typename T>
 struct Node {
 
-    Content content;
+    T info;
     Node * next, * previous;
 
-    Node(const Content &_content): content(_content), next(nullptr), previous(nullptr) {}
+    Node(const T &_info): info(_info), next(nullptr), previous(nullptr) {}
 };
 

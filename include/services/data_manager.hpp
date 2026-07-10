@@ -4,23 +4,25 @@
 #include <fstream>
 #include <string>
 
-template <typename T>
+#include "containers/doubly_linked_list.hpp"
+#include "containers/node.hpp"
+template<typename T>
 class DataManager {
 
     protected:
 
         std::string data_file;
-
-        template <typename U> 
+ 
+        template <typename U>
         void file_frame (std::ofstream & file, U info) { file << info << ";"; }
 
     public:
 
         explicit DataManager (const std::string & data_file): data_file(data_file) {}
 
-        virtual void write_data(const T & data) = 0;
-        virtual T * get_data(int id) = 0;
-
+        virtual void save_data(const DoublyLinkedList<T> & list) = 0;
+        virtual void load_data(DoublyLinkedList<T> & list) = 0;
+    
         virtual ~ DataManager() = default;
 
 };

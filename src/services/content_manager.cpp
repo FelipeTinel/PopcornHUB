@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "containers/doubly_linked_list.hpp"
 #include "services/content_manager.hpp"
 #include "core/content.hpp"
 
@@ -19,67 +20,64 @@ void ContentManager::content_frame (std::ofstream & file, const Content & conten
 
 }
 
-void ContentManager::write_data (const Content & content) {
+void ContentManager::save_data (const DoublyLinkedList<Content> & list) {
 
-    std::ofstream write_file(data_file, std::ios::app);
+    std::ofstream file(data_file);
 
-    if (write_file.is_open()) {
-        
-        content_frame(write_file, content);
-        write_file.close();
+    if (!file.is_open()) return;
 
-    } else {
-        std::cout << "Erro, arquivo não encontrado." << std::endl;
+    Node<Content> * pointer = list.get_head();
+    
+    while (pointer != nullptr) {
+
+        content_frame(file, pointer->info);
+        pointer = pointer->next;
+
     }
+
+    file.close();
 
 }
 
-Content * ContentManager::get_data(int id) {
+void ContentManager::load_data(DoublyLinkedList<Content> & list) {
     
-    std::ifstream read_content (data_file);
-    
-    std::string search_id;
-
-    if (!read_content.is_open()) {
-
-        std::cerr << "Arquivo não encontrado" << std::endl;
-
-    } else {
-
-        while (std::getline(read_content, search_id)) {
-            
-            std::stringstream ss(search_id);
-            std::string camp;
-            
-            if (std::getline(ss, camp, ';')) {
-                
-                int actual_id = std::stoi(camp);
-                
-                if (actual_id == id) {
-                    
-                    std::string title, str_type, str_genre, str_year, str_views, str_rating;
-                    
-                    std::getline(ss, title, ';');
-                    std::getline(ss, str_type, ';');
-                    std::getline(ss, str_genre, ';');
-                    std::getline(ss, str_year, ';');
-                    std::getline(ss, str_views, ';');
-                    std::getline(ss, str_rating, ';');
-    
-                    Type type = static_cast<Type>(std::stoi(str_type));
-                    Genre genre = static_cast<Genre>(std::stoi(str_genre));
-                    int year = std::stoi(str_year);
-                    long views = std::stol(str_views);
-                    float rating = std::stof(str_rating);
-    
-                    return new Content(title, type, genre, year, views, rating);
-    
-                }
-            } 
-        }
-        
+    std::ifstream file(data_file);
+    if (!file.is_open()) {
+        std::cout << "Arquivo não encontrado." << std::endl;
+        return;
     }
-    
-    return nullptr; 
-}
 
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+
+        std::stringstream ss(line);
+        std::string field;
+
+        std::getline(ss, field, ';');
+        int id = std::stoi(field);
+
+        std::string title;
+        std::getline(ss, title, ';');
+
+        std::getline(ss, field, ';');
+        Type type = static_cast<Type>(std::stoi(field));
+
+        std::getline(ss, field, ';');
+        Genre genre = static_cast<Genre>(std::stoi(field));
+
+        std::getline(ss, field, ';');
+        int year = std::stoi(field);
+
+        std::getline(ss, field, ';');
+        long views = std::stol(field);
+
+        std::getline(ss, field, ';');
+        float rating = std::stof(field);
+
+        Content content(id, title, type, genre, year, views, rating);
+        list.insert(content);
+    }
+
+    file.close();
+}

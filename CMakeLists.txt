@@ -7,15 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 add_executable(
-    test_data_management
-    tests/test_data_management.cpp
-    src/core/content.cpp
+    test_content_save
+    tests/test_content_save.cpp
     src/services/content_manager.cpp
-    )
-
-add_executable(
-    test_get_data
-    tests/test_get_data.cpp
     src/core/content.cpp
-    src/services/content_manager.cpp
-    )
+)
