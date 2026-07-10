@@ -10,6 +10,7 @@ class DoublyLinkedList {
     public:
 
         DoublyLinkedList(): head(nullptr) {}
+        DoublyLinkedList(Node * head): head(head) {}
     
         ~ DoublyLinkedList ();
     
