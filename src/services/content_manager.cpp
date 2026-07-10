@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "containers/doubly_linked_list.hpp"
 #include "services/content_manager.hpp"
 #include "core/content.hpp"
 
@@ -19,15 +20,14 @@ void ContentManager::content_frame (std::ofstream & file, const Content & conten
 
 }
 
-void ContentManager::save_data () {
+void ContentManager::save_data (const DoublyLinkedList<Content> & list) {
 
     std::ofstream file(data_file);
 
     if (!file.is_open()) return;
 
-    main_list.go_start();
 
-    while () content_frame (file, content);
+    
 
 }
 
@@ -38,5 +38,5 @@ void ContentManager::load_data() {
 
 Node * ContentManager::get_list() {
 
-    
+
 }

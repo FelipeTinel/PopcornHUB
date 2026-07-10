@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,9 +18,7 @@ class ContentManager : public DataManager<Content> {
 
         ContentManager (const std::string & data_file) : DataManager<Content>(data_file) {}
 
-        void save_data() override;
-        void load_data() override;
-
-        Node * get_list () override;
-
+        void save_data(const DoublyLinkedList<Content> & list) override;
+        Node<Content> * load_data() override;
+        
 };
