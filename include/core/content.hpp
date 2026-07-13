@@ -5,6 +5,8 @@
 
 #include "genre.hpp"
 #include "type.hpp"
+
+template <typename T>
 class Content {
 
     private:
@@ -19,6 +21,7 @@ class Content {
         float rating;
         int rating_count;
         double score;
+        
 
     public:
 

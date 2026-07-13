@@ -17,7 +17,9 @@ Content::Content (std::string title, Type type, Genre genre, int year, long view
     rating((rating <= 5 && rating >= 0) ? rating : 0),
     rating_count(0)
 
-{}
+{
+    lista_conteudos.insert(this);
+}
 
 Content::Content (int id, std::string title, Type type, Genre genre, int year, long views, float rating, int rating_count):
 
@@ -32,6 +34,7 @@ Content::Content (int id, std::string title, Type type, Genre genre, int year, l
 
 {
     if (id >= next_id) next_id = id + 1;
+    lista_conteudos.insert(this);
 }
 
 int Content::get_id() const { return id; }
