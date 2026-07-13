@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-enum class TelaAtiva {
+enum class Screen {
     PROFILE_CHOOSE,   
     REGISTER,   
     QUESTIONARY,    

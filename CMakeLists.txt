@@ -24,7 +24,10 @@ set(IMGUI_SOURCES
 )
 
 add_executable(ECV
-    tests/test_content_save.cpp
+    tests/test_ui.cpp
+    src/ui/window.cpp
+    src/services/auth_service.cpp
+    src/services/interaction_service.cpp
     src/services/user_manager.cpp
     src/services/comment_manager.cpp
     src/services/content_manager.cpp
