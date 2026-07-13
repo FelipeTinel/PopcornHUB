@@ -2,20 +2,24 @@
 
 #include "ui/screens.hpp"
 #include "ui/window.hpp"
+#include "core/comment.hpp"
 #include "../../thirdparty/imgui/imgui.h"
 #include "../../thirdparty/imgui/backends/imgui_impl_glfw.h"
 #include "../../thirdparty/imgui/backends/imgui_impl_opengl3.h"
 
-Window::Window(AuthService & auth, InteractionService & interaction, DoublyLinkedList<Content> & contents,
+Window::Window(AuthService & auth, InteractionService & interaction,
+               DoublyLinkedList<Content> & contents, DoublyLinkedList<Comment> & comments,
                int width, int height, const char * title)
     : windowId(nullptr), width(width), height(height), title(title),
       actual_screen(Screen::PROFILE_CHOOSE),
-      auth_service(auth), interaction_service(interaction), contents(contents),
+      auth_service(auth), interaction_service(interaction), contents(contents), comments(comments),
       selected_content(nullptr)
 {
     buffer_nome[0] = '\0';
     buffer_senha[0] = '\0';
     buffer_titulo_admin[0] = '\0';
+    buffer_comentario[0] = '\0';
+    buffer_avaliacao = 5.0f;
 
     initGLFW();
     initImGui();
@@ -156,16 +160,90 @@ void Window::render_user_dashboard() {
     ImGui::End();
 }
 
+const char * Window::genre_to_string(Genre g) {
+    switch (g) {
+        case Genre::ACTION:           return "Acao";
+        case Genre::COMEDY:           return "Comedia";
+        case Genre::ROMANCE:          return "Romance";
+        case Genre::HORROR:           return "Terror";
+        case Genre::SUSPENSE:         return "Suspense";
+        case Genre::DRAMA:            return "Drama";
+        case Genre::SCIENCE_FICTION:  return "Ficcao Cientifica";
+    }
+    return "Desconhecido";
+}
+
+const char * Window::type_to_string(Type t) {
+    switch (t) {
+        case Type::MOVIE:       return "Filme";
+        case Type::SERIES:      return "Serie";
+        case Type::DOCUMENTARY: return "Documentario";
+        case Type::ANIME:       return "Anime";
+        case Type::CARTOON:     return "Desenho";
+    }
+    return "Desconhecido";
+}
+
 void Window::render_content_detail() {
 
     ImGui::Begin("PopcornHUB - Detalhes");
 
-    if (selected_content != nullptr) {
-        ImGui::Text("Assistindo: %s", selected_content->get_title().c_str());
+    if (selected_content == nullptr) {
+        ImGui::Text("Nenhum conteudo selecionado.");
+        if (ImGui::Button("Voltar para Home")) {
+            actual_screen = Screen::USER_DASHBOARD;
+        }
+        ImGui::End();
+        return;
     }
 
+    ImGui::Text("Assistindo: %s", selected_content->get_title().c_str());
+    ImGui::Text("Genero: %s", genre_to_string(selected_content->get_genre()));
+    ImGui::SameLine();
+    ImGui::Text("| Tipo: %s", type_to_string(selected_content->get_type()));
+    ImGui::Text("Ano: %d", selected_content->get_year());
+    ImGui::Text("Views: %ld", selected_content->get_views());
+    ImGui::Text("Avaliacao media: %.1f (%d avaliacoes)",
+                selected_content->get_rating(), selected_content->get_rating_count());
+
+    ImGui::Separator();
     ImGui::Button("PLAY", ImVec2(-1, 200));
 
+    ImGui::Separator();
+    ImGui::Text("Deixe sua avaliacao:");
+    ImGui::SliderFloat("##nota", &buffer_avaliacao, 0.0f, 5.0f, "%.1f");
+    ImGui::SameLine();
+    if (ImGui::Button("Avaliar")) {
+        interaction_service.rate_content(*selected_content, buffer_avaliacao);
+    }
+
+    ImGui::Separator();
+    ImGui::Text("Comentarios:");
+
+    if (ImGui::BeginChild("##comentarios", ImVec2(-1, 120), true)) {
+
+        Node<Comment> * node = comments.get_head();
+
+        while (node != nullptr) {
+            if (node->info.get_content_id() == selected_content->get_id()) {
+                ImGui::TextWrapped("- %s", node->info.get_comment().c_str());
+            }
+            node = node->next;
+        }
+
+        ImGui::EndChild();
+    }
+
+    ImGui::InputText("##novo_comentario", buffer_comentario, sizeof(buffer_comentario));
+    ImGui::SameLine();
+    if (ImGui::Button("Comentar")) {
+        if (buffer_comentario[0] != '\0') {
+            interaction_service.add_comment_to_content(*selected_content, buffer_comentario);
+            buffer_comentario[0] = '\0';
+        }
+    }
+
+    ImGui::Separator();
     if (ImGui::Button("Voltar para Home")) {
         actual_screen = Screen::USER_DASHBOARD;
     }

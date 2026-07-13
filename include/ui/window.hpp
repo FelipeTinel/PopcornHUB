@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "core/comment.hpp"
 #include "ui/screens.hpp"
 #include "services/auth_service.hpp"
 #include "services/interaction_service.hpp"
@@ -20,23 +21,26 @@ class Window {
 
         Screen actual_screen;
 
-        // referencias para os services (a UI passa a enxergar o "backend")
         AuthService & auth_service;
         InteractionService & interaction_service;
         DoublyLinkedList<Content> & contents;
+        DoublyLinkedList<Comment> & comments; 
 
         Content * selected_content;
 
-        // buffers de input, agora membros da classe em vez de "static" no .cpp
+        char buffer_comentario[256];            
+        float buffer_avaliacao;   
         char buffer_nome[128];
         char buffer_senha[128];
         char buffer_titulo_admin[128];
+
+        const char * genre_to_string(Genre g);
+        const char * type_to_string(Type t);
 
         bool initGLFW();
         bool initImGui();
         void cleanup();
 
-        // uma funcao por tela, no lugar dos "case" do switch gigante
         void render_profile_choose();
         void render_register();
         void render_questionary();
@@ -48,7 +52,7 @@ class Window {
     public:
 
         Window(AuthService & auth, InteractionService & interaction, DoublyLinkedList<Content> & contents,
-               int width = 1280, int height = 720, const char * title = "PopcornHUB");
+            DoublyLinkedList<Comment> & comments, int width = 1280, int height = 720, const char * title = "PopcornHUB");
 
         ~Window();
 

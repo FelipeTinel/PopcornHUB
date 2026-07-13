@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "containers/node.hpp"
 #include "services/auth_service.hpp"
 #include "containers/doubly_linked_list.hpp"
 #include "services/user_manager.hpp"

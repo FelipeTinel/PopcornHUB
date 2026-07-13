@@ -37,7 +37,7 @@ int main() {
     AuthService auth(users);
     InteractionService interaction(auth, comments);
 
-    Window window(auth, interaction, contents);
+    Window window(auth, interaction, contents, comments);
     window.run();
 
     content_manager.save_data(contents);
