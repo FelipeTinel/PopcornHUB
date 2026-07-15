@@ -52,7 +52,7 @@ void Content::set_rating(float rating) { if (rating <= 5 && rating >= 0) this->r
 
 void Content::add_rating(float new_rating) { 
     
-    if (new_rating < 0.0f || new_rating > 0.0f) return;
+    if (new_rating < 0.0f || new_rating > 5.0f) return;
 
     float total_score = (this->rating * this->rating_count) + new_rating;
     this->rating_count++;
