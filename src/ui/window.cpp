@@ -210,11 +210,19 @@ void Window::render_content_detail() {
     ImGui::Button("PLAY", ImVec2(-1, 200));
 
     ImGui::Separator();
-    ImGui::Text("Deixe sua avaliacao:");
-    ImGui::SliderFloat("##nota", &buffer_avaliacao, 0.0f, 5.0f, "%.1f");
-    ImGui::SameLine();
-    if (ImGui::Button("Avaliar")) {
-        interaction_service.rate_content(*selected_content, buffer_avaliacao);
+
+    bool already_rated = auth_service.is_logged_in() &&
+        interaction_service.has_rated(auth_service.get_current_user()->get_id(), selected_content->get_id());
+
+    if (already_rated) {
+        ImGui::Text("Voce ja avaliou este conteudo.");
+    } else {
+        ImGui::Text("Deixe sua avaliacao:");
+        ImGui::SliderFloat("##nota", &buffer_avaliacao, 0.0f, 5.0f, "%.1f");
+        ImGui::SameLine();
+        if (ImGui::Button("Avaliar")) {
+            interaction_service.rate_content(*selected_content, buffer_avaliacao);
+        }
     }
 
     ImGui::Separator();
@@ -226,7 +234,11 @@ void Window::render_content_detail() {
 
         while (node != nullptr) {
             if (node->info.get_content_id() == selected_content->get_id()) {
-                ImGui::TextWrapped("- %s", node->info.get_comment().c_str());
+
+                User * author = auth_service.find_by_id(node->info.get_user_id());
+                std::string author_name = (author != nullptr) ? author->get_name() : "Usuario desconhecido";
+
+                ImGui::TextWrapped("%s: %s", author_name.c_str(), node->info.get_comment().c_str());
             }
             node = node->next;
         }
