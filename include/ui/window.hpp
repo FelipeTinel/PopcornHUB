@@ -3,9 +3,11 @@
 #include <GLFW/glfw3.h>
 
 #include "core/comment.hpp"
+#include "core/user.hpp"
 #include "ui/screens.hpp"
 #include "services/auth_service.hpp"
 #include "services/interaction_service.hpp"
+#include "services/admin_service.hpp"
 #include "containers/doubly_linked_list.hpp"
 #include "core/content.hpp"
 
@@ -23,6 +25,7 @@ class Window {
 
         AuthService & auth_service;
         InteractionService & interaction_service;
+        AdminService & content_admin_service;
         DoublyLinkedList<Content> & contents;
         DoublyLinkedList<Comment> & comments; 
 
@@ -32,7 +35,13 @@ class Window {
         float buffer_avaliacao;   
         char buffer_nome[128];
         char buffer_senha[128];
+
         char buffer_titulo_admin[128];
+        int buffer_type_admin;
+        int buffer_genre_admin;
+        int buffer_year_admin;
+        int buffer_views_admin;
+        float buffer_rating_admin;
 
         const char * genre_to_string(Genre g);
         const char * type_to_string(Type t);
@@ -51,8 +60,9 @@ class Window {
 
     public:
 
-        Window(AuthService & auth, InteractionService & interaction, DoublyLinkedList<Content> & contents,
-            DoublyLinkedList<Comment> & comments, int width = 1280, int height = 720, const char * title = "PopcornHUB");
+        Window(AuthService & auth, InteractionService & interaction, AdminService & content_admin,
+            DoublyLinkedList<Content> & contents, DoublyLinkedList<Comment> & comments,
+            int width = 1280, int height = 720, const char * title = "PopcornHUB");
 
         ~Window();
 

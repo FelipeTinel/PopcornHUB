@@ -7,12 +7,13 @@
 #include "../../thirdparty/imgui/backends/imgui_impl_glfw.h"
 #include "../../thirdparty/imgui/backends/imgui_impl_opengl3.h"
 
-Window::Window(AuthService & auth, InteractionService & interaction,
+Window::Window(AuthService & auth, InteractionService & interaction, AdminService & content_admin,
                DoublyLinkedList<Content> & contents, DoublyLinkedList<Comment> & comments,
                int width, int height, const char * title)
     : windowId(nullptr), width(width), height(height), title(title),
       actual_screen(Screen::PROFILE_CHOOSE),
-      auth_service(auth), interaction_service(interaction), contents(contents), comments(comments),
+      auth_service(auth), interaction_service(interaction), content_admin_service(content_admin),
+      contents(contents), comments(comments),
       selected_content(nullptr)
 {
     buffer_nome[0] = '\0';
@@ -20,6 +21,12 @@ Window::Window(AuthService & auth, InteractionService & interaction,
     buffer_titulo_admin[0] = '\0';
     buffer_comentario[0] = '\0';
     buffer_avaliacao = 5.0f;
+
+    buffer_type_admin = 0;
+    buffer_genre_admin = 0;
+    buffer_year_admin = 2024;
+    buffer_views_admin = 0;
+    buffer_rating_admin = 0.0f;
 
     initGLFW();
     initImGui();
@@ -263,57 +270,99 @@ void Window::render_content_detail() {
     ImGui::End();
 }
 
-void Window::render_admin_dashboard() {
+    void Window::render_admin_dashboard() {
 
-    ImGui::Begin("Painel Administrativo");
-    ImGui::Text("Gerenciar Conteudos:");
+        ImGui::Begin("Painel Administrativo");
+        ImGui::Text("Gerenciar Conteudos:");
 
-    if (ImGui::Button("Adicionar Novo Conteudo")) {
-        buffer_titulo_admin[0] = '\0';
-        actual_screen = Screen::ADMIN_FORMULARY;
-    }
-
-    ImGui::Separator();
-
-    Node<Content> * node = contents.get_head();
-    while (node != nullptr) {
-
-        ImGui::Text("%s", node->info.get_title().c_str());
-        ImGui::SameLine();
-
-        std::string btn_label = "Editar##" + std::to_string(node->info.get_id());
-        if (ImGui::Button(btn_label.c_str())) {
-            selected_content = &node->info;
-            std::strncpy(buffer_titulo_admin, node->info.get_title().c_str(), sizeof(buffer_titulo_admin));
+        if (ImGui::Button("Adicionar Novo Conteudo")) {
+            selected_content = nullptr;
+            buffer_titulo_admin[0] = '\0';
+            buffer_type_admin = 0;
+            buffer_genre_admin = 0;
+            buffer_year_admin = 2024;
+            buffer_views_admin = 0;
+            buffer_rating_admin = 0.0f;
             actual_screen = Screen::ADMIN_FORMULARY;
         }
 
-        node = node->next;
-    }
+        ImGui::Separator();
 
-    if (ImGui::Button("Sair do Painel")) {
-        actual_screen = Screen::PROFILE_CHOOSE;
-    }
+        Node<Content> * node = contents.get_head();
+        while (node != nullptr) {
 
-    ImGui::End();
+            Content * current = &node->info;
+            node = node->next; // avanca antes, pois "Excluir" pode invalidar o node atual
+
+            ImGui::Text("%s", current->get_title().c_str());
+            ImGui::SameLine();
+
+            std::string edit_label = "Editar##" + std::to_string(current->get_id());
+            if (ImGui::Button(edit_label.c_str())) {
+                selected_content = current;
+                std::strncpy(buffer_titulo_admin, current->get_title().c_str(), sizeof(buffer_titulo_admin) - 1);
+                buffer_titulo_admin[sizeof(buffer_titulo_admin) - 1] = '\0';
+                buffer_type_admin = static_cast<int>(current->get_type());
+                buffer_genre_admin = static_cast<int>(current->get_genre());
+                buffer_year_admin = current->get_year();
+                buffer_views_admin = static_cast<int>(current->get_views());
+                buffer_rating_admin = current->get_rating();
+                actual_screen = Screen::ADMIN_FORMULARY;
+            }
+
+            ImGui::SameLine();
+
+            std::string delete_label = "Excluir##" + std::to_string(current->get_id());
+            if (ImGui::Button(delete_label.c_str())) {
+                if (selected_content == current) selected_content = nullptr;
+                content_admin_service.remove_content(current->get_id());
+            }
+        }
+
+        if (ImGui::Button("Sair do Painel")) {
+            actual_screen = Screen::PROFILE_CHOOSE;
+        }
+
+        ImGui::End();
 }
 
 void Window::render_admin_formulary() {
 
+    static const char * type_options[] = { "Filme", "Serie", "Documentario", "Anime", "Desenho" };
+    static const char * genre_options[] = { "Acao", "Comedia", "Romance", "Terror", "Suspense", "Drama", "Ficcao Cientifica" };
+
     ImGui::Begin("Admin - Formulario");
-    ImGui::Text("Cadastrar/Editar Item");
+    ImGui::Text(selected_content == nullptr ? "Cadastrar Novo Item" : "Editar Item");
 
     ImGui::InputText("Nome", buffer_titulo_admin, sizeof(buffer_titulo_admin));
+    ImGui::Combo("Tipo", &buffer_type_admin, type_options, IM_ARRAYSIZE(type_options));
+    ImGui::Combo("Genero", &buffer_genre_admin, genre_options, IM_ARRAYSIZE(genre_options));
+    ImGui::InputInt("Ano", &buffer_year_admin);
+    ImGui::InputInt("Views", &buffer_views_admin);
+    ImGui::SliderFloat("Avaliacao inicial", &buffer_rating_admin, 0.0f, 5.0f, "%.1f");
+
+    if (buffer_year_admin < 0) buffer_year_admin = 0;
+    if (buffer_views_admin < 0) buffer_views_admin = 0;
 
     if (ImGui::Button("Salvar")) {
 
-        if (selected_content != nullptr) {
-            selected_content->set_title(buffer_titulo_admin);
-            selected_content = nullptr;
-        }
+        if (buffer_titulo_admin[0] != '\0') {
 
-        actual_screen = Screen::ADMIN_DASHBOARD;
-    }
+            Type type = static_cast<Type>(buffer_type_admin);
+            Genre genre = static_cast<Genre>(buffer_genre_admin);
+
+                if (selected_content == nullptr) {
+                    content_admin_service.add_content(buffer_titulo_admin, type, genre,
+                        buffer_year_admin, buffer_views_admin, buffer_rating_admin);
+                } else {
+                    content_admin_service.edit_content(selected_content->get_id(), buffer_titulo_admin, type, genre,
+                        buffer_year_admin, buffer_views_admin, buffer_rating_admin);
+                }
+
+                selected_content = nullptr;
+                actual_screen = Screen::ADMIN_DASHBOARD;
+            }
+        }
     ImGui::SameLine();
     if (ImGui::Button("Cancelar")) {
         selected_content = nullptr;

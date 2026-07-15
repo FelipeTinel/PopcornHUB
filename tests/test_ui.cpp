@@ -5,6 +5,7 @@
 #include "services/user_manager.hpp"
 #include "services/comment_manager.hpp"
 #include "containers/doubly_linked_list.hpp"
+#include "services/admin_service.hpp"
 #include "core/user.hpp"
 #include "core/content.hpp"
 #include "core/comment.hpp"
@@ -36,8 +37,9 @@ int main() {
 
     AuthService auth(users);
     InteractionService interaction(auth, comments);
+    AdminService content_admin(contents);
 
-    Window window(auth, interaction, contents, comments);
+    Window window(auth, interaction, content_admin, contents, comments);
     window.run();
 
     content_manager.save_data(contents);
