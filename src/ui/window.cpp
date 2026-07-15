@@ -14,7 +14,8 @@ Window::Window(AuthService & auth, InteractionService & interaction, AdminServic
       actual_screen(Screen::PROFILE_CHOOSE),
       auth_service(auth), interaction_service(interaction), content_admin_service(content_admin),
       contents(contents), comments(comments),
-      selected_content(nullptr)
+      selected_content(nullptr), login_error(false)
+
 {
     buffer_nome[0] = '\0';
     buffer_senha[0] = '\0';
@@ -104,16 +105,28 @@ void Window::render_register() {
 
     if (ImGui::Button("Avancar", ImVec2(100, 30))) {
 
-        if (!auth_service.login_user(buffer_nome, buffer_senha)) {
-            auth_service.register_user(buffer_nome, buffer_senha);
-            auth_service.login_user(buffer_nome, buffer_senha);
+        bool logged_in = auth_service.login_user(buffer_nome, buffer_senha);
+
+        if (!logged_in) {
+            bool created = auth_service.register_user(buffer_nome, buffer_senha);
+            if (created) logged_in = auth_service.login_user(buffer_nome, buffer_senha);
         }
 
-        actual_screen = Screen::QUESTIONARY;
+        if (logged_in) {
+            login_error = false;
+            actual_screen = Screen::QUESTIONARY;
+        } else {
+            login_error = true;
+        }
     }
     ImGui::SameLine();
     if (ImGui::Button("Voltar")) {
+        login_error = false;
         actual_screen = Screen::PROFILE_CHOOSE;
+    }
+
+    if (login_error) {
+        ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f), "Senha incorreta para esse usuario.");
     }
 
     ImGui::End();
