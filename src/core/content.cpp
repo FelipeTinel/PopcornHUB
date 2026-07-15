@@ -60,3 +60,7 @@ void Content::add_rating(float new_rating) {
     this->rating = total_score / this->rating_count;
     
 }
+
+bool content_rating_desc(const Content &a, const Content &b) {
+    return a.get_rating() > b.get_rating();
+}

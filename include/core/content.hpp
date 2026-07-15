@@ -44,3 +44,5 @@ class Content {
         void add_rating (float new_rating);
 
 };
+
+bool content_rating_desc(const Content &a, const Content &b);
