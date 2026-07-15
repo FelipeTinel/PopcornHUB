@@ -28,6 +28,7 @@ add_executable(ECV
     src/ui/window.cpp
     src/services/auth_service.cpp
     src/services/interaction_service.cpp
+    src/services/admin_service.cpp
     src/services/user_manager.cpp
     src/services/comment_manager.cpp
     src/services/content_manager.cpp

@@ -48,6 +48,7 @@ void Content::set_type(Type type) { this->type = type; }
 void Content::set_genre(Genre genre) { this->genre = genre; }
 void Content::set_year(int year) { this->year = year; }
 void Content::add_views(long views) { this->views += views; }
+void Content::set_views(long views) { this->views = views; }
 void Content::set_rating(float rating) { if (rating <= 5 && rating >= 0) this->rating = rating; }
 
 void Content::add_rating(float new_rating) { 

@@ -45,3 +45,7 @@ bool AuthService::login_user(const std::string & username, const std::string & p
 }
 
 void AuthService::logout() { current_user = nullptr; }
+
+User * AuthService::find_by_id(int id) const {
+    return user_list.search(id);
+}

@@ -39,6 +39,7 @@ class Content {
         void set_genre(Genre gere);
         void set_year(int year);
         void add_views(long views);
+        void set_views(long views);
         void set_rating(float rating);
         void add_rating (float new_rating);
 

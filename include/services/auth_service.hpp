@@ -26,6 +26,7 @@ class AuthService {
 
         bool is_logged_in() const { return current_user != nullptr; }
         User * get_current_user() const { return current_user; }
+        User * find_by_id(int id) const;
 
 
 };
