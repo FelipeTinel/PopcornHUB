@@ -6,9 +6,9 @@ int Comment::next_id = 1;
 
 Comment::Comment (): id(0), content_id(0), user_id(0), text("") {}
 
-Comment::Comment(int _user_id, int _content_id, std::string _text): id(next_id++), user_id(_user_id), content_id(_content_id), text(_text) {}
+Comment::Comment(int _content_id, int _user_id, std::string _text): id(next_id++), content_id(_content_id), user_id(_user_id), text(_text) {}
 
-Comment::Comment(int id, int _user_id, int _content_id, std::string _text): id(id), user_id(_user_id), content_id(_content_id), text(_text) 
+Comment::Comment(int id, int _content_id, int _user_id, std::string _text): id(id), content_id(_content_id), user_id(_user_id), text(_text) 
 {
     if (id >= next_id) next_id += 1;
 }
