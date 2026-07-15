@@ -30,6 +30,8 @@ class Window {
         DoublyLinkedList<Comment> & comments; 
 
         Content * selected_content;
+        
+        bool login_error;
 
         char buffer_comentario[256];            
         float buffer_avaliacao;   

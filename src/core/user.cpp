@@ -10,7 +10,7 @@ User::User(std::string _name, std::string _password): id(next_id++), name(_name)
 
 User::User(int id, std::string _name, std::string _password): id(id), name(_name), password(_password) 
 {
-    if (id >= next_id) next_id += 1;
+    if (id >= next_id) next_id = id + 1;
 }
 
 int User::get_id () const { return id; }
