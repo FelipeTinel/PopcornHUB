@@ -19,7 +19,6 @@ class Content {
         long views;
         float rating;
         int rating_count;
-        double score;
         
 
     public:
@@ -36,7 +35,6 @@ class Content {
         long get_views() const;
         float get_rating() const;
         int get_rating_count() const;
-        double get_score() const;
 
         void set_title(std::string title);
         void set_type(Type type);
@@ -46,6 +44,5 @@ class Content {
         void set_views(long views);
         void set_rating(float rating);
         void add_rating (float new_rating);
-        void set_score(double score);
 
 };

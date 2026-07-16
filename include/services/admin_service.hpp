@@ -17,7 +17,7 @@ class AdminService {
 
         explicit AdminService(DoublyLinkedList<Content> & contents);
 
-        Content * add_content(const std::string & title, Type type, Genre genre, int year, long views, float rating);
-        bool edit_content(int id, const std::string & title, Type type, Genre genre, int year, long views, float rating);
+        Content * add_content(const std::string & title, Type type, Genre::Value genre, int year, long views, float rating);
+        bool edit_content(int id, const std::string & title, Type type, Genre::Value genre, int year, long views, float rating);
         bool remove_content(int id);
 };

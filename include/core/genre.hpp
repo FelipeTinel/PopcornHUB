@@ -6,6 +6,7 @@
 
 class Genre {
     public:
+        // Mantemos o enum para que Content e outros serviços continuem funcionando
         enum Value {
             ACTION = 1,
             COMEDY = 2,
@@ -21,18 +22,26 @@ class Genre {
         int id;
         std::string name;
         DoublyLinkedList<std::string> subgenres_list;
+        
+        // Mantemos a lista global para busca de metadados
         static DoublyLinkedList<Genre> genres_list;
 
     public:
-        Genre();
+        Genre(); // Construtor padrão
+        // Construtor para inicializar com dados completos
         Genre(int id, std::string name, DoublyLinkedList<std::string> subgenres_list);
 
+        // Métodos de manipulação
         void addSubgenre(const std::string& s);
         static void addGenre(const Genre& g);
 
+        // Getters
         int get_id() const;
         std::string get_name() const;
-        Value get_genre() const;
-        DoublyLinkedList<std::string> get_subgenres();
+        
+        // Retorna o enum associado a este objeto
+        Value get_value() const { return static_cast<Value>(id); }
+        
+        DoublyLinkedList<std::string> get_subgenres() const;
         static DoublyLinkedList<Genre>& get_genres_list();
 };

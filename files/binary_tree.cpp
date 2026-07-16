@@ -1,6 +1,20 @@
 #include "containers/binary_tree.hpp"
 
+BinaryTree::BinaryTree() : root(nullptr) {}
 
+BinaryTree::~BinaryTree() {
+    destroy_tree(root);
+}
+
+void BinaryTree::destroy_tree(NodeTree* node) {
+    if (node == nullptr) return;
+
+    destroy_tree(node->yes);
+    destroy_tree(node->no);
+
+    delete node->question; // libera a Question alocada em build_genre_nodes/build_subgenre_nodes
+    delete node;            // result_list (DoublyLinkedList) se libera sozinha aqui, via seu proprio destrutor
+}
 
 void BinaryTree::build_tree(DoublyLinkedList<Genre>& genreList) {
     root = build_genre_nodes(genreList.get_head());

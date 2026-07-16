@@ -43,7 +43,6 @@ int Content::get_year() const { return year; }
 long Content::get_views() const { return views; }
 float Content::get_rating () const { return rating; }
 int Content::get_rating_count () const { return rating_count; }
-double Content::get_score() const { return score; }
 
 void Content::set_title(std::string title) { this->title = title; }
 void Content::set_type(Type type) { this->type = type; }
@@ -52,7 +51,6 @@ void Content::set_year(int year) { this->year = year; }
 void Content::add_views(long views) { this->views += views; }
 void Content::set_views(long views) { this->views = views; }
 void Content::set_rating(float rating) { if (rating <= 5 && rating >= 0) this->rating = rating; }
-void Content::set_score(double score) { this->score = score; }
 void Content::add_rating(float new_rating) { 
     
     if (new_rating < 0.0f || new_rating > 5.0f) return;

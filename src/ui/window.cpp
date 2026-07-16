@@ -180,7 +180,7 @@ void Window::render_user_dashboard() {
     ImGui::End();
 }
 
-const char * Window::genre_to_string(Genre g) {
+const char * Window::genre_to_string(Genre::Value g) {
     switch (g) {
         case Genre::ACTION:           return "Acao";
         case Genre::COMEDY:           return "Comedia";
@@ -362,7 +362,7 @@ void Window::render_admin_formulary() {
         if (buffer_titulo_admin[0] != '\0') {
 
             Type type = static_cast<Type>(buffer_type_admin);
-            Genre genre = static_cast<Genre>(buffer_genre_admin);
+            Genre::Value genre = static_cast<Genre::Value>(buffer_genre_admin);
 
                 if (selected_content == nullptr) {
                     content_admin_service.add_content(buffer_titulo_admin, type, genre,
