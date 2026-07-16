@@ -6,7 +6,6 @@
 #include "containers/doubly_linked_list.hpp"
 #include "core/content.hpp"
 #include "core/comment.hpp"
-#include "core/watched_entry.hpp"
 #include "containers/node.hpp"
 
 struct RatedNode {

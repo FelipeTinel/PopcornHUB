@@ -165,18 +165,6 @@ void Console::print_content_line(const Content & content) {
                << " | " << content.get_views() << " views" << Ansi::RESET << "\n";
 }
 
-// Imprime uma linha formatada com as informacoes de uma entrada do
-// historico de mais assistidos (posicao no ranking + dados do WatchedEntry).
-void Console::print_watched_entry_line(const WatchedEntry & entry, int position) {
-
-    std::cout << "  " << Ansi::CYAN << position << "." << Ansi::RESET
-               << " " << Ansi::BOLD << entry.get_title() << Ansi::RESET
-               << Ansi::DIM << " - " << type_to_string(entry.get_type())
-               << " | " << genre_to_string(entry.get_genre()) << Ansi::RESET
-               << " | " << Ansi::YELLOW << entry.get_times_watched() << Ansi::RESET
-               << " vezes assistido\n";
-}
-
 void Console::render_profile_choose() {
 
     Ansi::clear_screen();
@@ -279,10 +267,6 @@ void Console::build_recommendations() {
             node = node->next;
         }
     }
-
-    // Estatisticas do Sistema: registra essa rodada de recomendacao (tipo,
-    // genero e o contador de total de recomendacoes realizadas).
-    statistics.register_recommendation(recommended);
 }
 
 void Console::render_recommendations() {
@@ -345,7 +329,6 @@ void Console::render_user_dashboard() {
     std::cout << "\n";
     if (user_page > 0)               Ansi::print_menu_option("a", "Pagina anterior");
     if (user_page < total_pages - 1) Ansi::print_menu_option("p", "Proxima pagina");
-    Ansi::print_menu_option("h", "Historico de mais assistidos");
     Ansi::print_menu_option("0", "Logout");
 
     std::string input = read_line("\nDigite o ID de um titulo para assistir, ou uma das opcoes acima: ");
@@ -357,11 +340,6 @@ void Console::render_user_dashboard() {
 
     if (input == "a" || input == "A") {
         if (user_page > 0) user_page--;
-        return;
-    }
-
-    if (input == "h" || input == "H") {
-        actual_screen = ConsoleScreen::WATCH_HISTORY;
         return;
     }
 
@@ -486,8 +464,6 @@ void Console::render_admin_dashboard() {
     Ansi::print_menu_option("3", "Remover conteudo");
     if (admin_page > 0)               Ansi::print_menu_option("4", "Pagina anterior");
     if (admin_page < total_pages - 1) Ansi::print_menu_option("5", "Proxima pagina");
-    Ansi::print_menu_option("6", "Ver estatisticas do sistema");
-    Ansi::print_menu_option("7", "Ver historico de mais assistidos");
     Ansi::print_menu_option("0", "Sair do painel");
 
     int option = read_int("\nEscolha uma opcao: ");
@@ -514,10 +490,6 @@ void Console::render_admin_dashboard() {
         admin_page--;
     } else if (option == 5 && admin_page < total_pages - 1) {
         admin_page++;
-    } else if (option == 6) {
-        actual_screen = ConsoleScreen::STATISTICS;
-    } else if (option == 7) {
-        actual_screen = ConsoleScreen::WATCH_HISTORY;
     } else if (option == 0) {
         actual_screen = ConsoleScreen::PROFILE_CHOOSE;
         admin_page = 0;
@@ -571,104 +543,6 @@ void Console::render_admin_formulary(bool editing) {
     selected_content = nullptr;
 }
 
-// ---------------------------------------------------------------------
-// Histórico de Conteúdos Mais Assistidos
-// Lista duplamente encadeada (InteractionService::watch_history), ja
-// mantida ordenada em ordem decrescente de visualizacoes a cada chamada
-// de InteractionService::watch_content().
-// ---------------------------------------------------------------------
-void Console::render_watch_history() {
-
-    Ansi::clear_screen();
-    Ansi::print_title("Historico de Mais Assistidos");
-
-    const DoublyLinkedList<WatchedEntry> & history = interaction_service.get_watch_history();
-    Node<WatchedEntry> * node = history.get_head();
-
-    if (node == nullptr) Ansi::print_info("  (nenhum conteudo assistido ainda)");
-
-    int position = 1;
-    while (node != nullptr) {
-        print_watched_entry_line(node->info, position);
-        node = node->next;
-        position++;
-    }
-
-    Ansi::print_menu_option("0", "Voltar");
-    read_int("\nDigite 0 para voltar: ");
-
-    actual_screen = auth_service.is_logged_in() ? ConsoleScreen::USER_DASHBOARD : ConsoleScreen::ADMIN_DASHBOARD;
-}
-
-// ---------------------------------------------------------------------
-// Estatisticas do Sistema
-// Junta os contadores acumulados em StatisticsService (tipo/genero mais e
-// menos recomendado, total de recomendacoes) com estatisticas calculadas
-// na hora a partir da lista principal de conteudos (total de views, titulo
-// mais assistido por tipo/genero, titulos nunca selecionados).
-// ---------------------------------------------------------------------
-void Console::render_statistics() {
-
-    Ansi::clear_screen();
-    Ansi::print_title("Estatisticas do Sistema");
-
-    if (statistics.get_total_recommendations() == 0) {
-
-        Ansi::print_info("  Ainda nao foi gerada nenhuma recomendacao (responda o questionario pelo menos uma vez).");
-
-    } else {
-
-        std::cout << Ansi::BOLD << "Tipo mais recomendado: " << Ansi::RESET
-                   << type_to_string(statistics.get_most_recommended_type()) << "\n";
-        std::cout << Ansi::BOLD << "Tipo menos recomendado: " << Ansi::RESET
-                   << type_to_string(statistics.get_least_recommended_type()) << "\n";
-        std::cout << Ansi::BOLD << "Genero mais recomendado: " << Ansi::RESET
-                   << genre_to_string(statistics.get_most_recommended_genre()) << "\n";
-        std::cout << Ansi::BOLD << "Genero menos recomendado: " << Ansi::RESET
-                   << genre_to_string(statistics.get_least_recommended_genre()) << "\n";
-    }
-
-    std::cout << Ansi::BOLD << "Quantidade total de recomendacoes realizadas: " << Ansi::RESET
-               << statistics.get_total_recommendations() << "\n";
-    std::cout << Ansi::BOLD << "Quantidade total de visualizacoes: " << Ansi::RESET
-               << StatisticsService::get_total_views(contents) << "\n";
-
-    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulo mais assistido por tipo:" << Ansi::RESET << "\n";
-    for (int t = 0; t < TYPE_COUNT; t++) {
-        Type type = static_cast<Type>(t);
-        Content * best = StatisticsService::get_most_watched_by_type(contents, type);
-        std::cout << "  " << type_to_string(type) << ": ";
-        if (best == nullptr) std::cout << Ansi::DIM << "(nenhum cadastrado)" << Ansi::RESET << "\n";
-        else std::cout << best->get_title() << Ansi::DIM << " (" << best->get_views() << " views)" << Ansi::RESET << "\n";
-    }
-
-    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulo mais assistido por genero:" << Ansi::RESET << "\n";
-    for (int g = 1; g < GENRE_COUNT; g++) {
-        Genre::Value genre = static_cast<Genre::Value>(g);
-        Content * best = StatisticsService::get_most_watched_by_genre(contents, genre);
-        std::cout << "  " << genre_to_string(genre) << ": ";
-        if (best == nullptr) std::cout << Ansi::DIM << "(nenhum cadastrado)" << Ansi::RESET << "\n";
-        else std::cout << best->get_title() << Ansi::DIM << " (" << best->get_views() << " views)" << Ansi::RESET << "\n";
-    }
-
-    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulos nunca assistidos:" << Ansi::RESET << "\n";
-    Node<Content> * node = contents.get_head();
-    bool any_never_watched = false;
-    while (node != nullptr) {
-        if (node->info.get_views() == 0) {
-            any_never_watched = true;
-            std::cout << "  - " << node->info.get_title() << "\n";
-        }
-        node = node->next;
-    }
-    if (!any_never_watched) Ansi::print_info("  (todos os titulos ja foram assistidos ao menos uma vez)");
-
-    Ansi::print_menu_option("0", "Voltar");
-    read_int("\nDigite 0 para voltar: ");
-
-    actual_screen = auth_service.is_logged_in() ? ConsoleScreen::USER_DASHBOARD : ConsoleScreen::ADMIN_DASHBOARD;
-}
-
 void Console::run() {
 
     while (actual_screen != ConsoleScreen::EXIT) {
@@ -682,8 +556,6 @@ void Console::run() {
             case ConsoleScreen::USER_DASHBOARD:   render_user_dashboard();   break;
             case ConsoleScreen::CONTENT_DETAIL:   render_content_detail();   break;
             case ConsoleScreen::ADMIN_DASHBOARD:  render_admin_dashboard();  break;
-            case ConsoleScreen::WATCH_HISTORY:    render_watch_history();    break;
-            case ConsoleScreen::STATISTICS:       render_statistics();       break;
             case ConsoleScreen::EXIT: break;
         }
     }
