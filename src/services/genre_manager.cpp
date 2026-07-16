@@ -5,12 +5,15 @@ void GenreManager::Genre_frame(std::ofstream & file, const Genre & genre) {
     file_frame(file, genre.get_id());
     file_frame(file, genre.get_name());
     
-    // Salva o enum como inteiro
+    //salva o enum como inteiro
     file_frame(file, static_cast<int>(genre.get_value()));
     
-    // Formato especial para a lista de subgêneros: {sub1,sub2,sub3,}
+    //formato especial para a lista de subgêneros: {sub1,sub2,sub3,}
     file << "{";
-    Node<std::string>* sub = genre.get_subgenres().get_head();
+    //get_subgenres() retorna a lista POR VALOR (copia). Precisa ficar numa
+    //variavel nomeada, senao o temporario e destruido no fim da expressao e da invalido
+    DoublyLinkedList<std::string> subgenres = genre.get_subgenres();
+    Node<std::string>* sub = subgenres.get_head();
     while (sub != nullptr) {
         file << sub->info << ",";
         sub = sub->next;
@@ -62,12 +65,11 @@ void GenreManager::load_data(DoublyLinkedList<Genre> & list) {
         std::stringstream ss_subs(sub_content);
         std::string sub;
         while (std::getline(ss_subs, sub, ',')) {
-            if (!sub.empty()) subgenres_list.insert(sub);
+            if (!sub.empty()) subgenres_list.insert_end(sub);
         }
 
-        // Criar o objeto, adicionar à lista passada e à global
         Genre new_genre(id, name, subgenres_list);
-        list.insert(new_genre);
+        list.insert_end(new_genre); //insert_end precisa ser usado pra manter a ordem da lista
         Genre::addGenre(new_genre); 
     }
     file.close();

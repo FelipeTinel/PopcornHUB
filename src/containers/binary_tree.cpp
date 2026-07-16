@@ -27,7 +27,11 @@ NodeTree* BinaryTree::build_genre_nodes(Node<Genre>* current) {
     NodeTree* node = new NodeTree();
     DoublyLinkedList<std::string> priorityList;
     node->question = new Question(current->info, true);
-    node->yes = build_subgenre_nodes(current->info.get_subgenres().get_head(), priorityList, 0);
+
+    //importante!! get_subgenres() retorna a lista POR VALOR (uma copia). Precisa ficar guardada numa variavel nomeada, senao o temporario e destruido no fim da expressao e o get_head() usado abaixo vira um ponteiro invalido
+
+    DoublyLinkedList<std::string> subgenres = current->info.get_subgenres();
+    node->yes = build_subgenre_nodes(subgenres.get_head(), priorityList, 0);
     node->no = build_genre_nodes(current->next);
     return node;
 }

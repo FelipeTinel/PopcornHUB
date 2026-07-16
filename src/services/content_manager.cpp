@@ -17,6 +17,7 @@ void ContentManager::content_frame (std::ofstream & file, const Content & conten
     file_frame(file, content.get_views());
     file_frame(file, content.get_rating());
     file_frame(file, content.get_rating_count());
+    file_frame(file, content.get_subgenre());
     file << "\n";
 
 }
@@ -79,7 +80,12 @@ void ContentManager::load_data(DoublyLinkedList<Content> & list) {
         std::getline(ss, field, ';');
         int rating_count = std::stoi(field);
 
-        Content content(id, title, type, genre, year, views, rating, rating_count);
+        // Subgenero: campo novo. Linhas antigas (gravadas antes dessa
+        // mudanca) nao tem esse campo, entao tratamos como opcional.
+        std::string subgenre = "";
+        if (std::getline(ss, field, ';')) subgenre = field;
+
+        Content content(id, title, type, genre, year, views, rating, rating_count, subgenre);
         list.insert(content);
     }
 

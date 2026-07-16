@@ -43,6 +43,7 @@ class Console {
         AdminService & content_admin_service;
         DoublyLinkedList<Content> & contents;
         DoublyLinkedList<Comment> & comments;
+        DoublyLinkedList<Genre> & genres;
 
         Content * selected_content;
 
