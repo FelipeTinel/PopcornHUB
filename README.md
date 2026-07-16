@@ -29,4 +29,6 @@ make run    # compila (se necessário) e já executa
 
 No Windows, usar o terminal MSYS2 (UCRT64/MinGW64) ou qualquer terminal com `g++`/`make` no PATH.
 
-## Estrutura do projeto
+## Os melhores programadores:
+
+Marcelo Líryo, Janderson Blanski e Felipe Tinel.
