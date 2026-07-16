@@ -106,3 +106,13 @@
 106;Ilha do Medo;0;5;2010;68918;2.94;383;Thriller Psicologico;
 107;O Grande Truque;0;5;2006;57578;3.43;300;Thriller Psicologico;
 108;A Rede Social;0;6;2010;969047;2.47;272;Biografia;
+109;O Clube dos Cinco;0;8;1985;450000;4.5;320;Escolar;
+110;Marley e Eu;0;8;2008;850000;4.2;450;Familiar;
+111;Lady Bird;0;8;2017;320000;3.9;180;Escolar;
+112;Sexta-Feira Muito Louca;0;8;2003;620000;3.8;290;Familiar;
+113;Sociedade dos Poetas Mortos;0;8;1989;710000;4.8;400;Escolar;
+114;Pequena Miss Sunshine;0;8;2006;540000;4.3;310;Familiar;
+115;As Vantagens de Ser Invisivel;0;8;2012;680000;4.4;380;Escolar;
+116;Extraordinario;0;8;2017;590000;4.6;340;Familiar;
+117;Curtindo a Vida Adoidado;0;8;1986;880000;4.7;420;Escolar;
+118;De Repente 30;0;8;2004;730000;4.1;280;Familiar;

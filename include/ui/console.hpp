@@ -56,6 +56,7 @@ class Console {
 
         int user_page;
         int admin_page;
+        
 
         const char * genre_to_string(Genre::Value g);
         const char * type_to_string(Type t);
