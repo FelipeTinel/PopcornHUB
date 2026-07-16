@@ -1,0 +1,3 @@
+1;2;1;Adorei esse filme!;
+2;1;1;Não gostei muito;
+3;2;2;É... esperava mais....;

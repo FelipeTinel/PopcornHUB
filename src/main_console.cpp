@@ -1,4 +1,4 @@
-#include "ui/window.hpp"
+#include "ui/console.hpp"
 #include "services/auth_service.hpp"
 #include "services/interaction_service.hpp"
 #include "services/content_manager.hpp"
@@ -18,6 +18,8 @@ int main() {
     DoublyLinkedList<Content> contents;
     DoublyLinkedList<Comment> comments;
 
+    // Arquivos persistentes reais do projeto (pasta data/), diferente dos
+    // arquivos de teste usados em tests/test_ui.cpp.
     UserManager user_manager{"../data/users_data.txt"};
     ContentManager content_manager{"../data/contents_data.txt"};
     CommentManager comment_manager{"../data/comments_data.txt"};
@@ -39,8 +41,8 @@ int main() {
     InteractionService interaction(auth, comments);
     AdminService content_admin(contents);
 
-    Window window(auth, interaction, content_admin, contents, comments);
-    window.run();
+    Console console(auth, interaction, content_admin, contents, comments);
+    console.run();
 
     content_manager.save_data(contents);
     comment_manager.save_data(comments);
