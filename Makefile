@@ -16,17 +16,25 @@ SRCS = src/main_console.cpp \
        src/core/genre.cpp \
        src/core/question.cpp \
        src/containers/binary_tree.cpp
-       
+
 TARGET = build/ecv_terminal
+
+ifeq ($(OS),Windows_NT)
+    MKDIR = if not exist build mkdir build
+    RUN_TARGET = ecv_terminal.exe
+else
+    MKDIR = mkdir -p build
+    RUN_TARGET = ./ecv_terminal
+endif
 
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
-	mkdir -p build
+	@$(MKDIR)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
 
 run: all
-	cd build && ./ecv_terminal
+	cd build && $(RUN_TARGET)
 
 clean:
 	rm -f $(TARGET)
