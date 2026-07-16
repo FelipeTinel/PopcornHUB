@@ -11,3 +11,5 @@ enum class Type {
     CARTOON,
 
 };
+
+const int TYPE_COUNT = 5; // quantidade de valores em Type

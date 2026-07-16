@@ -5,6 +5,7 @@
 #include "services/user_manager.hpp"
 #include "services/comment_manager.hpp"
 #include "services/genre_manager.hpp"
+#include "services/genre_manager.hpp"
 #include "containers/doubly_linked_list.hpp"
 #include "services/admin_service.hpp"
 #include "core/user.hpp"
@@ -33,6 +34,7 @@ int main() {
     user_manager.load_data(users);
     content_manager.load_data(contents);
     comment_manager.load_data(comments);
+    genre_manager.load_data(genres);
     genre_manager.load_data(genres);
 
     if (contents.get_head() == nullptr) {

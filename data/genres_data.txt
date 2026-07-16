@@ -6,3 +6,27 @@
 3;Romance;3;{Comedia Romantica,Drama Romantico,}
 2;Comedia;2;{Satira,Pastelao,Romantica,}
 1;Acao;1;{Guerra,Artes Marciais,Aventura,}
+8;Slice of Life;8;{Familiar,Escolar,}
+7;Ficcao Cientifica;7;{Cyberpunk,Distopia,Space Opera,}
+6;Drama;6;{Historico,Biografia,}
+5;Suspense;5;{Thriller Psicologico,Policial,}
+4;Terror;4;{Psicologico,Sobrenatural,Slasher,}
+3;Romance;3;{Comedia Romantica,Drama Romantico,}
+2;Comedia;2;{Satira,Pastelao,Romantica,}
+1;Acao;1;{Guerra,Artes Marciais,Aventura,}
+8;Slice of Life;8;{Familiar,Escolar,}
+7;Ficcao Cientifica;7;{Cyberpunk,Distopia,Space Opera,}
+6;Drama;6;{Historico,Biografia,}
+5;Suspense;5;{Thriller Psicologico,Policial,}
+4;Terror;4;{Psicologico,Sobrenatural,Slasher,}
+3;Romance;3;{Comedia Romantica,Drama Romantico,}
+2;Comedia;2;{Satira,Pastelao,Romantica,}
+1;Acao;1;{Guerra,Artes Marciais,Aventura,}
+8;Slice of Life;8;{Familiar,Escolar,}
+7;Ficcao Cientifica;7;{Cyberpunk,Distopia,Space Opera,}
+6;Drama;6;{Historico,Biografia,}
+5;Suspense;5;{Thriller Psicologico,Policial,}
+4;Terror;4;{Psicologico,Sobrenatural,Slasher,}
+3;Romance;3;{Comedia Romantica,Drama Romantico,}
+2;Comedia;2;{Satira,Pastelao,Romantica,}
+1;Acao;1;{Guerra,Artes Marciais,Aventura,}

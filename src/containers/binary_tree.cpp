@@ -54,7 +54,7 @@ NodeTree* BinaryTree::build_subgenre_nodes(Node<std::string>* currentSub, Doubly
     return node;
 }
 
-NodeTree* BinaryTree::process_yes_branch(Node<std::string>* currentSub, DoublyLinkedList<std::string>& priorityList, int contPriority) {
+NodeTree* BinaryTree::process_yes_branch(Node<std::string>* currentSub, DoublyLinkedList<std::string>& priorityList, int /*contPriority*/) {
     DoublyLinkedList<std::string> newList = priorityList; 
     newList.insert(currentSub->info);
     return build_subgenre_nodes(currentSub->next, newList, 0);

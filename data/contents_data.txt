@@ -58,11 +58,11 @@
 58;A Bruxa;0;4;2015;317942;3.52;328;Sobrenatural;
 59;Us;0;4;2019;213573;3.12;79;Psicologico;
 60;Sinister;0;4;2012;174396;4.86;277;Sobrenatural;
-61;O Silencio dos Inocentes;0;5;1991;972242;4.76;272;Policial;
+61;O Silencio dos Inocentes;0;5;1991;972244;4.76;272;Policial;
 62;Sete Pecados Mortais;0;5;1995;633038;3.47;166;Policial;
 63;Prisioneiros;0;5;2013;122301;4.64;186;Policial;
 64;Garota Exemplar;0;5;2014;877064;2.72;158;Thriller Psicologico;
-65;Zodiaco;0;5;2007;257572;4.84;291;Policial;
+65;Zodiaco;0;5;2007;257573;4.84055;292;Policial;
 66;Shutter Island;0;5;2010;94814;3.46;375;Thriller Psicologico;
 67;Fragmentado;0;5;2016;77574;3.6;390;Thriller Psicologico;
 68;A Origem do Mal;0;5;2021;136869;3.98;66;Thriller Psicologico;

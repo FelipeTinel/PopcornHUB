@@ -201,6 +201,15 @@ void Console::print_content_line(const Content & content) {
                << " | " << content.get_views() << " views" << Ansi::RESET << "\n";
 }
 
+void Console::print_watched_entry_line(const WatchedEntry & entry, int position) {
+
+    std::cout << "  " << Ansi::CYAN << position << "." << Ansi::RESET
+               << " " << Ansi::BOLD << entry.get_title() << Ansi::RESET
+               << Ansi::DIM << " - " << type_to_string(entry.get_type())
+               << " | " << genre_to_string(entry.get_genre())
+               << " | " << entry.get_watch_count() << " views" << Ansi::RESET << "\n";
+}
+
 void Console::render_profile_choose() {
 
     Ansi::clear_screen();
@@ -384,6 +393,8 @@ void Console::render_user_dashboard() {
     std::cout << "\n";
     if (user_page > 0)               Ansi::print_menu_option("a", "Pagina anterior");
     if (user_page < total_pages - 1) Ansi::print_menu_option("p", "Proxima pagina");
+    Ansi::print_menu_option("h", "Ver mais assistidos");
+    Ansi::print_menu_option("e", "Ver estatisticas");
     Ansi::print_menu_option("0", "Logout");
 
     std::string input = read_line("\nDigite o ID de um titulo para assistir, ou uma das opcoes acima: ");
@@ -395,6 +406,16 @@ void Console::render_user_dashboard() {
 
     if (input == "a" || input == "A") {
         if (user_page > 0) user_page--;
+        return;
+    }
+
+    if (input == "h" || input == "H") {
+        actual_screen = ConsoleScreen::WATCH_HISTORY;
+        return;
+    }
+
+    if (input == "e" || input == "E") {
+        actual_screen = ConsoleScreen::STATISTICS;
         return;
     }
 
@@ -519,6 +540,8 @@ void Console::render_admin_dashboard() {
     Ansi::print_menu_option("3", "Remover conteudo");
     if (admin_page > 0)               Ansi::print_menu_option("4", "Pagina anterior");
     if (admin_page < total_pages - 1) Ansi::print_menu_option("5", "Proxima pagina");
+    Ansi::print_menu_option("6", "Ver mais assistidos");
+    Ansi::print_menu_option("7", "Ver estatisticas");
     Ansi::print_menu_option("0", "Sair do painel");
 
     int option = read_int("\nEscolha uma opcao: ");
@@ -545,6 +568,10 @@ void Console::render_admin_dashboard() {
         admin_page--;
     } else if (option == 5 && admin_page < total_pages - 1) {
         admin_page++;
+    } else if (option == 6) {
+        actual_screen = ConsoleScreen::WATCH_HISTORY;
+    } else if (option == 7) {
+        actual_screen = ConsoleScreen::STATISTICS;
     } else if (option == 0) {
         actual_screen = ConsoleScreen::PROFILE_CHOOSE;
         admin_page = 0;
@@ -727,6 +754,8 @@ void Console::run() {
             case ConsoleScreen::USER_DASHBOARD:   render_user_dashboard();   break;
             case ConsoleScreen::CONTENT_DETAIL:   render_content_detail();   break;
             case ConsoleScreen::ADMIN_DASHBOARD:  render_admin_dashboard();  break;
+            case ConsoleScreen::WATCH_HISTORY:    render_watch_history();    break;
+            case ConsoleScreen::STATISTICS:       render_statistics();       break;
             case ConsoleScreen::EXIT: break;
         }
     }

@@ -45,3 +45,6 @@ class Genre {
         DoublyLinkedList<std::string> get_subgenres() const;
         static DoublyLinkedList<Genre>& get_genres_list();
 };
+
+// Values vao de 1 (ACTION) a 8 (SLICE_OF_LIFE); +1 pra usar como limite de loop (g < GENRE_COUNT)
+const int GENRE_COUNT = 9;

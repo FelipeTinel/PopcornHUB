@@ -8,9 +8,12 @@
 #include "core/content.hpp"
 #include "core/type.hpp"
 #include "core/genre.hpp"
+#include "core/watched_entry.hpp"
 #include "services/auth_service.hpp"
 #include "services/interaction_service.hpp"
 #include "services/admin_service.hpp"
+#include "services/statistics.hpp"
+#include "services/statistics_service.hpp"
 #include "containers/doubly_linked_list.hpp"
 #include "containers/binary_tree.hpp"
 #include "ui/ansi.hpp"
@@ -23,6 +26,8 @@ enum class ConsoleScreen {
     USER_DASHBOARD,
     CONTENT_DETAIL,
     ADMIN_DASHBOARD,
+    WATCH_HISTORY,
+    STATISTICS,
     EXIT
 };
 
@@ -47,6 +52,7 @@ class Console {
         NodeTree * current_tree_node;
         Genre::Value chosen_genre;
         DoublyLinkedList<Content> recommended;
+        Statistics statistics;
 
         int user_page;
         int admin_page;
@@ -63,6 +69,7 @@ class Console {
         int count_contents() const;
         Node<Content> * get_page_start(int page) const;
         void print_content_line(const Content & content);
+        void print_watched_entry_line(const WatchedEntry & entry, int position);
 
         void render_profile_choose();
         void render_login();
@@ -73,6 +80,8 @@ class Console {
         void render_content_detail();
         void render_admin_dashboard();
         void render_admin_formulary(bool editing);
+        void render_watch_history();
+        void render_statistics();
 
     public:
 
