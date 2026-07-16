@@ -1,9 +1,3 @@
-# Compila e executa apenas a versao de TERMINAL do projeto (sem ImGui/GLFW/OpenGL).
-# Uso:
-#   make          -> compila
-#   make run      -> compila e executa
-#   make clean    -> remove o executavel
-
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
 

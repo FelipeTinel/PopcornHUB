@@ -27,6 +27,9 @@ class Console {
 
     private:
 
+        // Quantos itens sao mostrados por pagina nas listagens de catalogo.
+        static const int PAGE_SIZE = 8;
+
         ConsoleScreen actual_screen;
 
         AuthService & auth_service;
@@ -37,12 +40,22 @@ class Console {
 
         Content * selected_content;
 
+        // Pagina atual de cada listagem (uma para o usuario, outra para o admin,
+        // ja que cada uma pode estar em uma pagina diferente).
+        int user_page;
+        int admin_page;
+
         const char * genre_to_string(Genre g);
         const char * type_to_string(Type t);
+        const char * rating_color(float rating);
 
         int read_int(const std::string & prompt);
         float read_float(const std::string & prompt);
         std::string read_line(const std::string & prompt);
+
+        int count_contents() const;
+        Node<Content> * get_page_start(int page) const;
+        void print_content_line(const Content & content);
 
         void render_profile_choose();
         void render_login();

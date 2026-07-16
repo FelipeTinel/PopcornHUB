@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cctype>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -11,7 +12,8 @@ Console::Console(AuthService & auth, InteractionService & interaction, AdminServ
     : actual_screen(ConsoleScreen::PROFILE_CHOOSE),
       auth_service(auth), interaction_service(interaction), content_admin_service(content_admin),
       contents(contents), comments(comments),
-      selected_content(nullptr)
+      selected_content(nullptr),
+      user_page(0), admin_page(0)
 {}
 
 const char * Console::genre_to_string(Genre g) {
@@ -36,6 +38,14 @@ const char * Console::type_to_string(Type t) {
         case Type::CARTOON:     return "Desenho";
     }
     return "Desconhecido";
+}
+
+// Escolhe uma cor pra nota de acordo com o valor, so pra deixar a listagem
+// mais facil de ler rapidamente.
+const char * Console::rating_color(float rating) {
+    if (rating >= 4.0f) return Ansi::GREEN.c_str();
+    if (rating >= 2.5f) return Ansi::YELLOW.c_str();
+    return Ansi::RED.c_str();
 }
 
 int Console::read_int(const std::string & prompt) {
@@ -111,6 +121,48 @@ std::string Console::read_line(const std::string & prompt) {
     return value;
 }
 
+// Conta quantos conteudos existem percorrendo a lista encadeada do inicio ao fim.
+int Console::count_contents() const {
+
+    int total = 0;
+    Node<Content> * node = contents.get_head();
+
+    while (node != nullptr) {
+        total++;
+        node = node->next;
+    }
+
+    return total;
+}
+
+// Anda pela lista encadeada ate o primeiro item da pagina pedida.
+// Como a lista nao tem acesso direto por indice, precisa percorrer no-a-no.
+Node<Content> * Console::get_page_start(int page) const {
+
+    Node<Content> * node = contents.get_head();
+    int to_skip = page * PAGE_SIZE;
+
+    for (int i = 0; i < to_skip && node != nullptr; i++) {
+        node = node->next;
+    }
+
+    return node;
+}
+
+// Imprime uma linha formatada com as informacoes de um conteudo, usada tanto
+// na home do usuario quanto no painel do admin.
+void Console::print_content_line(const Content & content) {
+
+    std::cout << "  " << Ansi::CYAN << "[" << content.get_id() << "]" << Ansi::RESET
+               << " " << Ansi::BOLD << content.get_title() << Ansi::RESET
+               << Ansi::DIM << " - " << type_to_string(content.get_type())
+               << " | " << genre_to_string(content.get_genre())
+               << " | " << content.get_year() << Ansi::RESET
+               << " | nota " << rating_color(content.get_rating()) << content.get_rating() << Ansi::RESET
+               << Ansi::DIM << " (" << content.get_rating_count() << " avaliacoes)"
+               << " | " << content.get_views() << " views" << Ansi::RESET << "\n";
+}
+
 void Console::render_profile_choose() {
 
     Ansi::clear_screen();
@@ -159,23 +211,60 @@ void Console::render_user_dashboard() {
     Ansi::clear_screen();
     Ansi::print_title("Home");
 
-    std::cout << Ansi::BOLD << "Recomendados para voce:\n" << Ansi::RESET;
+    int total = count_contents();
+    int total_pages = (total == 0) ? 1 : (total + PAGE_SIZE - 1) / PAGE_SIZE;
 
-    Node<Content> * node = contents.get_head();
+    if (user_page >= total_pages) user_page = total_pages - 1;
+    if (user_page < 0) user_page = 0;
 
-    if (node == nullptr) Ansi::print_info("(nenhum conteudo cadastrado ainda)");
+    std::cout << Ansi::BOLD << "Catalogo" << Ansi::RESET
+               << Ansi::DIM << " (pagina " << (user_page + 1) << " de " << total_pages
+               << ", " << total << " titulos no total)" << Ansi::RESET << "\n\n";
 
-    while (node != nullptr) {
-        std::cout << "  " << Ansi::CYAN << "[" << node->info.get_id() << "]" << Ansi::RESET
-                   << " " << node->info.get_title() << "\n";
+    Node<Content> * node = get_page_start(user_page);
+
+    if (node == nullptr) Ansi::print_info("  (nenhum conteudo cadastrado ainda)");
+
+    int shown = 0;
+    while (node != nullptr && shown < PAGE_SIZE) {
+        print_content_line(node->info);
         node = node->next;
+        shown++;
     }
 
-    int choice = read_int("\nDigite o ID do conteudo para assistir, ou 0 para logout: ");
+    std::cout << "\n";
+    if (user_page > 0)               Ansi::print_menu_option("a", "Pagina anterior");
+    if (user_page < total_pages - 1) Ansi::print_menu_option("p", "Proxima pagina");
+    Ansi::print_menu_option("0", "Logout");
+
+    std::string input = read_line("\nDigite o ID de um titulo para assistir, ou uma das opcoes acima: ");
+
+    if (input == "p" || input == "P") {
+        if (user_page < total_pages - 1) user_page++;
+        return;
+    }
+
+    if (input == "a" || input == "A") {
+        if (user_page > 0) user_page--;
+        return;
+    }
+
+    bool numeric = !input.empty();
+    for (char c : input) {
+        if (!std::isdigit(static_cast<unsigned char>(c))) { numeric = false; break; }
+    }
+
+    if (!numeric) {
+        Ansi::print_error("Entrada invalida.");
+        return;
+    }
+
+    int choice = std::stoi(input);
 
     if (choice == 0) {
         auth_service.logout();
         actual_screen = ConsoleScreen::PROFILE_CHOOSE;
+        user_page = 0;
         return;
     }
 
@@ -255,23 +344,32 @@ void Console::render_admin_dashboard() {
     Ansi::clear_screen();
     Ansi::print_title("Painel Administrativo");
 
-    Node<Content> * node = contents.get_head();
+    int total = count_contents();
+    int total_pages = (total == 0) ? 1 : (total + PAGE_SIZE - 1) / PAGE_SIZE;
 
-    if (node == nullptr) Ansi::print_info("(nenhum conteudo cadastrado ainda)");
+    if (admin_page >= total_pages) admin_page = total_pages - 1;
+    if (admin_page < 0) admin_page = 0;
 
-    while (node != nullptr) {
-        std::cout << "  " << Ansi::CYAN << "[" << node->info.get_id() << "]" << Ansi::RESET
-                   << " " << node->info.get_title()
-                   << Ansi::DIM << " (" << type_to_string(node->info.get_type()) << ", "
-                   << genre_to_string(node->info.get_genre()) << ", "
-                   << node->info.get_year() << ")" << Ansi::RESET << "\n";
+    std::cout << Ansi::DIM << "(pagina " << (admin_page + 1) << " de " << total_pages
+               << ", " << total << " titulos no total)" << Ansi::RESET << "\n\n";
+
+    Node<Content> * node = get_page_start(admin_page);
+
+    if (node == nullptr) Ansi::print_info("  (nenhum conteudo cadastrado ainda)");
+
+    int shown = 0;
+    while (node != nullptr && shown < PAGE_SIZE) {
+        print_content_line(node->info);
         node = node->next;
+        shown++;
     }
 
     std::cout << "\n";
     Ansi::print_menu_option("1", "Adicionar novo conteudo");
     Ansi::print_menu_option("2", "Editar conteudo");
     Ansi::print_menu_option("3", "Remover conteudo");
+    if (admin_page > 0)               Ansi::print_menu_option("4", "Pagina anterior");
+    if (admin_page < total_pages - 1) Ansi::print_menu_option("5", "Proxima pagina");
     Ansi::print_menu_option("0", "Sair do painel");
 
     int option = read_int("\nEscolha uma opcao: ");
@@ -294,8 +392,13 @@ void Console::render_admin_dashboard() {
         bool removed = content_admin_service.remove_content(id);
         if (removed) Ansi::print_success("Conteudo removido.");
         else Ansi::print_error("Conteudo nao encontrado.");
+    } else if (option == 4 && admin_page > 0) {
+        admin_page--;
+    } else if (option == 5 && admin_page < total_pages - 1) {
+        admin_page++;
     } else if (option == 0) {
         actual_screen = ConsoleScreen::PROFILE_CHOOSE;
+        admin_page = 0;
     }
 }
 
