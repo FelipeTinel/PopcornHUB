@@ -6,7 +6,7 @@ int Content::next_id = 1;
 
 Content::Content (): id(0), title(""), type(Type::MOVIE), genre(Genre::ACTION), year(0), views(0), rating(0.0f), rating_count(0) {}
 
-Content::Content (std::string title, Type type, Genre genre, int year, long views, float rating):
+Content::Content (std::string title, Type type, Genre::Value genre, int year, long views, float rating):
 
     id(next_id++),
     title(title),
@@ -17,9 +17,10 @@ Content::Content (std::string title, Type type, Genre genre, int year, long view
     rating((rating <= 5 && rating >= 0) ? rating : 0),
     rating_count(0)
 
-{}
+{
+}
 
-Content::Content (int id, std::string title, Type type, Genre genre, int year, long views, float rating, int rating_count):
+Content::Content (int id, std::string title, Type type, Genre::Value genre, int year, long views, float rating, int rating_count):
 
     id(id),
     title(title),
@@ -37,7 +38,7 @@ Content::Content (int id, std::string title, Type type, Genre genre, int year, l
 int Content::get_id() const { return id; }
 std::string Content::get_title() const { return title; }
 Type Content::get_type() const { return type; }
-Genre Content::get_genre() const { return genre; }
+Genre::Value Content::get_genre() const { return genre; }
 int Content::get_year() const { return year; }
 long Content::get_views() const { return views; }
 float Content::get_rating () const { return rating; }
@@ -45,12 +46,11 @@ int Content::get_rating_count () const { return rating_count; }
 
 void Content::set_title(std::string title) { this->title = title; }
 void Content::set_type(Type type) { this->type = type; }
-void Content::set_genre(Genre genre) { this->genre = genre; }
+void Content::set_genre(Genre::Value genre) { this->genre = genre; }
 void Content::set_year(int year) { this->year = year; }
 void Content::add_views(long views) { this->views += views; }
 void Content::set_views(long views) { this->views = views; }
 void Content::set_rating(float rating) { if (rating <= 5 && rating >= 0) this->rating = rating; }
-
 void Content::add_rating(float new_rating) { 
     
     if (new_rating < 0.0f || new_rating > 5.0f) return;

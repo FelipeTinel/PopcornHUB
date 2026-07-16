@@ -65,7 +65,7 @@ void ContentManager::load_data(DoublyLinkedList<Content> & list) {
         Type type = static_cast<Type>(std::stoi(field));
 
         std::getline(ss, field, ';');
-        Genre genre = static_cast<Genre>(std::stoi(field));
+        Genre::Value genre = static_cast<Genre::Value>(std::stoi(field));
 
         std::getline(ss, field, ';');
         int year = std::stoi(field);

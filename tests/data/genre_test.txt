@@ -1,0 +1,3 @@
+3;Romance;{Época,Famliar,Sensual,}
+2;Terror;{Suspense,Slasher,Israelita,}
+1;Ação;{Luta,Veículos,Patriotismo,}

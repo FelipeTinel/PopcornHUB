@@ -2,7 +2,7 @@
 
 AdminService::AdminService(DoublyLinkedList<Content> & contents): contents(contents) {}
 
-Content * AdminService::add_content(const std::string & title, Type type, Genre genre, int year, long views, float rating) {
+Content * AdminService::add_content(const std::string & title, Type type, Genre::Value genre, int year, long views, float rating) {
 
     Content new_content(title, type, genre, year, views, rating);
     contents.insert(new_content);
@@ -10,7 +10,7 @@ Content * AdminService::add_content(const std::string & title, Type type, Genre 
     return &contents.get_head()->info; // insert() sempre poe no head da lista
 }
 
-bool AdminService::edit_content(int id, const std::string & title, Type type, Genre genre, int year, long views, float rating) {
+bool AdminService::edit_content(int id, const std::string & title, Type type, Genre::Value genre, int year, long views, float rating) {
 
     Content * target = contents.search(id);
     if (target == nullptr) return false;
