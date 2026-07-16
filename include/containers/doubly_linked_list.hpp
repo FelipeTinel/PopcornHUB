@@ -19,6 +19,7 @@ class DoublyLinkedList {
         ~ DoublyLinkedList ();
     
         void insert (const T &info);
+        void insert_end (const T &info);
         void insert_sorted (const T &info, bool (*comes_before)(const T&, const T&));
 
         T pop (int id);
@@ -76,6 +77,25 @@ void DoublyLinkedList<T>::insert(const T &info) {
     new_node->next = head;
 
     head = new_node;
+
+}
+
+template <typename T>
+void DoublyLinkedList<T>::insert_end(const T &info) {
+
+    Node<T> * new_node = new Node<T>(info);
+
+    new_node->next = nullptr;
+
+    if (tail == nullptr) {
+        new_node->previous = nullptr;
+        head = new_node;
+    } else {
+        new_node->previous = tail;
+        tail->next = new_node;
+    }
+
+    tail = new_node;
 
 }
 

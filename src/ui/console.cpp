@@ -3,16 +3,51 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <vector>
 
 #include "ui/console.hpp"
 #include "containers/node.hpp"
+
+namespace {
+
+
+    const DoublyLinkedList<std::string> * g_subgenre_priority = nullptr;
+
+    int subgenre_rank(const std::string & subgenre) {
+
+        const int NOT_FOUND = 1000000;
+
+        if (g_subgenre_priority == nullptr || subgenre.empty()) return NOT_FOUND;
+
+        Node<std::string> * node = g_subgenre_priority->get_head();
+        int index = 0;
+        while (node != nullptr) {
+            if (node->info == subgenre) return index;
+            node = node->next;
+            index++;
+        }
+
+        return NOT_FOUND;
+    }
+
+    bool content_subgenre_then_rating_desc(const Content & a, const Content & b) {
+
+        int rank_a = subgenre_rank(a.get_subgenre());
+        int rank_b = subgenre_rank(b.get_subgenre());
+
+        if (rank_a != rank_b) return rank_a < rank_b;
+
+        return content_rating_desc(a, b);
+    }
+
+}
 
 Console::Console(AuthService & auth, InteractionService & interaction, AdminService & content_admin,
                   DoublyLinkedList<Content> & contents, DoublyLinkedList<Comment> & comments,
                   DoublyLinkedList<Genre> & genres)
     : actual_screen(ConsoleScreen::PROFILE_CHOOSE),
       auth_service(auth), interaction_service(interaction), content_admin_service(content_admin),
-      contents(contents), comments(comments),
+      contents(contents), comments(comments), genres(genres),
       selected_content(nullptr),
       current_tree_node(nullptr),
       chosen_genre(static_cast<Genre::Value>(0)),
@@ -158,8 +193,9 @@ void Console::print_content_line(const Content & content) {
     std::cout << "  " << Ansi::CYAN << "[" << content.get_id() << "]" << Ansi::RESET
                << " " << Ansi::BOLD << content.get_title() << Ansi::RESET
                << Ansi::DIM << " - " << type_to_string(content.get_type())
-               << " | " << genre_to_string(content.get_genre())
-               << " | " << content.get_year() << Ansi::RESET
+               << " | " << genre_to_string(content.get_genre());
+    if (!content.get_subgenre().empty()) std::cout << " (" << content.get_subgenre() << ")";
+    std::cout << " | " << content.get_year() << Ansi::RESET
                << " | nota " << rating_color(content.get_rating()) << content.get_rating() << Ansi::RESET
                << Ansi::DIM << " (" << content.get_rating_count() << " avaliacoes)"
                << " | " << content.get_views() << " views" << Ansi::RESET << "\n";
@@ -251,22 +287,31 @@ void Console::build_recommendations() {
 
     recommended = DoublyLinkedList<Content>(); // limpa recomendacoes anteriores
 
+    g_subgenre_priority = (current_tree_node != nullptr) ? &current_tree_node->result_list : nullptr;
+
     Node<Content> * node = contents.get_head();
     while (node != nullptr) {
         if (chosen_genre != 0 && node->info.get_genre() == chosen_genre) {
-            recommended.insert_sorted(node->info, content_rating_desc);
+            recommended.insert_sorted(node->info, content_subgenre_then_rating_desc);
         }
         node = node->next;
     }
 
-    // fallback: se nada bateu com o genero escolhido, mostra tudo ordenado por avaliacao
+    //fallback: se nada bateu com o genero escolhido, mostra tudo (ainda
+    //respeitando a prioridade de subgenero, se houver) ordenado por avaliacao
     if (recommended.get_head() == nullptr) {
         node = contents.get_head();
         while (node != nullptr) {
-            recommended.insert_sorted(node->info, content_rating_desc);
+            recommended.insert_sorted(node->info, content_subgenre_then_rating_desc);
             node = node->next;
         }
     }
+
+    g_subgenre_priority = nullptr;
+
+    // Estatisticas do Sistema: registra essa rodada de recomendacao (tipo,
+    // genero e o contador de total de recomendacoes realizadas).
+    statistics.register_recommendation(recommended);
 }
 
 void Console::render_recommendations() {
@@ -274,12 +319,22 @@ void Console::render_recommendations() {
     Ansi::clear_screen();
     Ansi::print_title("Recomendados para voce");
 
+    const int MAX_SHOWN = 10;
+
     Node<Content> * node = recommended.get_head();
     if (node == nullptr) Ansi::print_info("(nenhuma recomendacao encontrada)");
 
-    while (node != nullptr) {
+    int shown = 0;
+    while (node != nullptr && shown < MAX_SHOWN) {
         print_content_line(node->info);
         node = node->next;
+        shown++;
+    }
+
+    int total_matched = recommended.size();
+    if (total_matched > shown) {
+        std::cout << Ansi::DIM << "\n(mostrando os " << shown << " melhores de "
+                   << total_matched << " encontrados)" << Ansi::RESET << "\n";
     }
 
     int choice = read_int("\nDigite o ID do conteudo para assistir, ou 0 para ir ao catalogo completo: ");
@@ -531,16 +586,132 @@ void Console::render_admin_formulary(bool editing) {
     Type type = static_cast<Type>(type_option);
     Genre::Value genre = static_cast<Genre::Value>(genre_option + 1);
 
+
+    std::string subgenre = "";
+
+    Node<Genre> * genre_node = genres.get_head();
+    while (genre_node != nullptr && genre_node->info.get_value() != genre) genre_node = genre_node->next;
+
+    if (genre_node != nullptr) {
+
+        std::vector<std::string> subgenre_options;
+        DoublyLinkedList<std::string> subgenres = genre_node->info.get_subgenres();
+        Node<std::string> * sub_node = subgenres.get_head();
+        while (sub_node != nullptr) {
+            subgenre_options.push_back(sub_node->info);
+            sub_node = sub_node->next;
+        }
+
+        if (!subgenre_options.empty()) {
+
+            std::cout << Ansi::DIM << "Subgenero (opcional):" << Ansi::RESET << "\n";
+            std::cout << "  0 - (nenhum)\n";
+            for (std::size_t i = 0; i < subgenre_options.size(); i++) {
+                std::cout << "  " << (i + 1) << " - " << subgenre_options[i] << "\n";
+            }
+
+            int sub_option = read_int("Escolha o subgenero: ");
+            if (sub_option >= 1 && static_cast<std::size_t>(sub_option) <= subgenre_options.size()) {
+                subgenre = subgenre_options[sub_option - 1];
+            }
+        }
+    }
+
     if (!editing) {
-        content_admin_service.add_content(titulo, type, genre, year, views, rating);
+        content_admin_service.add_content(titulo, type, genre, year, views, rating, subgenre);
         Ansi::print_success("\nConteudo cadastrado com sucesso.");
     } else {
-        bool ok = content_admin_service.edit_content(selected_content->get_id(), titulo, type, genre, year, views, rating);
+        bool ok = content_admin_service.edit_content(selected_content->get_id(), titulo, type, genre, year, views, rating, subgenre);
         if (ok) Ansi::print_success("\nConteudo atualizado com sucesso.");
         else Ansi::print_error("\nFalha ao atualizar conteudo.");
     }
 
     selected_content = nullptr;
+}
+
+void Console::render_watch_history() {
+
+    Ansi::clear_screen();
+    Ansi::print_title("Historico de Mais Assistidos");
+
+    const DoublyLinkedList<WatchedEntry> & history = interaction_service.get_watch_history();
+    Node<WatchedEntry> * node = history.get_head();
+
+    if (node == nullptr) Ansi::print_info("  (nenhum conteudo assistido ainda)");
+
+    int position = 1;
+    while (node != nullptr) {
+        print_watched_entry_line(node->info, position);
+        node = node->next;
+        position++;
+    }
+
+    Ansi::print_menu_option("0", "Voltar");
+    read_int("\nDigite 0 para voltar: ");
+
+    actual_screen = auth_service.is_logged_in() ? ConsoleScreen::USER_DASHBOARD : ConsoleScreen::ADMIN_DASHBOARD;
+}
+
+void Console::render_statistics() {
+
+    Ansi::clear_screen();
+    Ansi::print_title("Estatisticas do Sistema");
+
+    if (statistics.get_total_recommendations() == 0) {
+
+        Ansi::print_info("  Ainda nao foi gerada nenhuma recomendacao (responda o questionario pelo menos uma vez).");
+
+    } else {
+
+        std::cout << Ansi::BOLD << "Tipo mais recomendado: " << Ansi::RESET
+                   << type_to_string(statistics.get_most_recommended_type()) << "\n";
+        std::cout << Ansi::BOLD << "Tipo menos recomendado: " << Ansi::RESET
+                   << type_to_string(statistics.get_least_recommended_type()) << "\n";
+        std::cout << Ansi::BOLD << "Genero mais recomendado: " << Ansi::RESET
+                   << genre_to_string(statistics.get_most_recommended_genre()) << "\n";
+        std::cout << Ansi::BOLD << "Genero menos recomendado: " << Ansi::RESET
+                   << genre_to_string(statistics.get_least_recommended_genre()) << "\n";
+    }
+
+    std::cout << Ansi::BOLD << "Quantidade total de recomendacoes realizadas: " << Ansi::RESET
+               << statistics.get_total_recommendations() << "\n";
+    std::cout << Ansi::BOLD << "Quantidade total de visualizacoes: " << Ansi::RESET
+               << StatisticsService::get_total_views(contents) << "\n";
+
+    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulo mais assistido por tipo:" << Ansi::RESET << "\n";
+    for (int t = 0; t < TYPE_COUNT; t++) {
+        Type type = static_cast<Type>(t);
+        Content * best = StatisticsService::get_most_watched_by_type(contents, type);
+        std::cout << "  " << type_to_string(type) << ": ";
+        if (best == nullptr) std::cout << Ansi::DIM << "(nenhum cadastrado)" << Ansi::RESET << "\n";
+        else std::cout << best->get_title() << Ansi::DIM << " (" << best->get_views() << " views)" << Ansi::RESET << "\n";
+    }
+
+    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulo mais assistido por genero:" << Ansi::RESET << "\n";
+    for (int g = 1; g < GENRE_COUNT; g++) {
+        Genre::Value genre = static_cast<Genre::Value>(g);
+        Content * best = StatisticsService::get_most_watched_by_genre(contents, genre);
+        std::cout << "  " << genre_to_string(genre) << ": ";
+        if (best == nullptr) std::cout << Ansi::DIM << "(nenhum cadastrado)" << Ansi::RESET << "\n";
+        else std::cout << best->get_title() << Ansi::DIM << " (" << best->get_views() << " views)" << Ansi::RESET << "\n";
+    }
+
+    std::cout << "\n" << Ansi::BOLD << Ansi::MAGENTA << "Titulos nunca assistidos:" << Ansi::RESET << "\n";
+    Node<Content> * node = contents.get_head();
+    bool any_never_watched = false;
+    while (node != nullptr) {
+        if (node->info.get_views() == 0) {
+            any_never_watched = true;
+            std::cout << "  - " << node->info.get_title() << "\n";
+        }
+        node = node->next;
+    }
+    if (!any_never_watched) Ansi::print_info("  (todos os titulos ja foram assistidos ao menos uma vez)");
+
+    Ansi::print_menu_option("0", "Voltar");
+    read_int("\nDigite 0 para voltar: ");
+
+    actual_screen = auth_service.is_logged_in() ? ConsoleScreen::USER_DASHBOARD : ConsoleScreen::ADMIN_DASHBOARD;
 }
 
 void Console::run() {

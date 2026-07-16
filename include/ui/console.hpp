@@ -39,6 +39,7 @@ class Console {
         AdminService & content_admin_service;
         DoublyLinkedList<Content> & contents;
         DoublyLinkedList<Comment> & comments;
+        DoublyLinkedList<Genre> & genres;
 
         Content * selected_content;
 
@@ -49,6 +50,7 @@ class Console {
 
         int user_page;
         int admin_page;
+        
 
         const char * genre_to_string(Genre::Value g);
         const char * type_to_string(Type t);
