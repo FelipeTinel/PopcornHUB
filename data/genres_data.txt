@@ -1,0 +1,8 @@
+1;Acao;1;{Aventura,Artes Marciais,Guerra,}
+2;Comedia;2;{Romantica,Pastelao,Satira,}
+3;Romance;3;{Drama Romantico,Comedia Romantica,}
+4;Terror;4;{Slasher,Sobrenatural,Psicologico,}
+5;Suspense;5;{Policial,Thriller Psicologico,}
+6;Drama;6;{Biografia,Historico,}
+7;Ficcao Cientifica;7;{Space Opera,Distopia,Cyberpunk,}
+8;Slice of Life;8;{Escolar,Familiar,}

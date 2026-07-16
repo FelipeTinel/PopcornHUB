@@ -13,6 +13,9 @@
 #include "core/genre.hpp"
 #include "core/type.hpp"
 
+#include <initializer_list>
+#include <string>
+
 int main() {
 
     DoublyLinkedList<User> users;
@@ -41,9 +44,35 @@ int main() {
         contents.insert(c2);
     }
 
+    //arvore binaria precisa popular genero
+    if (genres.get_head() == nullptr) {
+
+        auto make_genre = [&genres](Genre::Value value, const std::string & name,
+                                     std::initializer_list<std::string> subs) {
+            DoublyLinkedList<std::string> subgenres;
+            for (const std::string & s : subs) subgenres.insert(s);
+            Genre g(value, name, subgenres);
+            genres.insert(g);
+            Genre::addGenre(g);
+        };
+
+        make_genre(Genre::ACTION,           "Acao",              {"Aventura", "Artes Marciais", "Guerra"});
+        make_genre(Genre::COMEDY,           "Comedia",           {"Romantica", "Pastelao", "Satira"});
+        make_genre(Genre::ROMANCE,          "Romance",           {"Drama Romantico", "Comedia Romantica"});
+        make_genre(Genre::HORROR,           "Terror",            {"Slasher", "Sobrenatural", "Psicologico"});
+        make_genre(Genre::SUSPENSE,         "Suspense",          {"Policial", "Thriller Psicologico"});
+        make_genre(Genre::DRAMA,            "Drama",             {"Biografia", "Historico"});
+        make_genre(Genre::SCIENCE_FICTION,  "Ficcao Cientifica", {"Space Opera", "Distopia", "Cyberpunk"});
+        make_genre(Genre::SLICE_OF_LIFE,    "Slice of Life",     {"Escolar", "Familiar"});
+    }
+
     AuthService auth(users);
     InteractionService interaction(auth, comments);
     AdminService content_admin(contents);
+
+    //o historico de Mais Assistidos deve refletir o total da PLATAFORMA, nao so o que for assistido nesta sessao.
+
+    interaction.seed_watch_history(contents);
 
     Console console(auth, interaction, content_admin, contents, comments, genres);
     console.run();

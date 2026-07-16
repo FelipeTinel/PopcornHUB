@@ -21,22 +21,38 @@ InteractionService::~InteractionService() {
     }
 }
 
+void InteractionService::seed_watch_history(const DoublyLinkedList<Content> & contents) {
+
+    Node<Content> * node = contents.get_head();
+    while (node != nullptr) {
+
+        long views = node->info.get_views();
+        if (views > 0) {
+            WatchedEntry entry(node->info.get_id(), node->info.get_title(),
+                                node->info.get_type(), node->info.get_genre(), views);
+            watch_history.insert_sorted(entry, watched_desc);
+        }
+
+        node = node->next;
+    }
+}
+
 void InteractionService::watch_content(Content& content) {
 
     content.add_views(1);
 
-    // Procura se ja existe uma entrada pra esse conteudo no historico.
+    //procura se ja existe uma entrada pra esse conteudo no historico.
     WatchedEntry * existing = watch_history.search(content.get_id());
 
     if (existing != nullptr) {
-
-        //Se ja existe: precisamos tirar da lista, incrementar e reinserir ordenado, porque a posicao dele pode ter mudado.
+        //ja existe: precisamos tirar da lista, incrementar e reinserir
+        //ordenado, porque a posicao dele pode ter mudado.
         WatchedEntry updated(*existing);
         updated.add_watch();
         watch_history.pop(content.get_id());
         watch_history.insert_sorted(updated, watched_desc);
     } else {
-        // Primeira vez que esse conteudo e assistido.
+        //primeira vez que esse conteudo e assistido.
         WatchedEntry new_entry(content.get_id(), content.get_title(), content.get_type(), content.get_genre(), 1);
         watch_history.insert_sorted(new_entry, watched_desc);
     }
