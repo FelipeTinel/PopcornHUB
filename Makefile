@@ -24,10 +24,8 @@ TARGET_DIR = build
 TARGET = $(TARGET_DIR)/ecv_terminal
 
 ifeq ($(OS),Windows_NT)
-    RUN_TARGET = ecv_terminal.exe
-    RM_CMD = if exist build rmdir /s /q build
+    RM_CMD = if exist $(TARGET_DIR) rmdir /s /q $(TARGET_DIR)
 else
-    RUN_TARGET = ./ecv_terminal
     RM_CMD = rm -rf $(TARGET_DIR)
 endif
 
@@ -40,7 +38,7 @@ $(TARGET): $(SRCS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
 
 run: all
-	cd $(TARGET_DIR) && $(RUN_TARGET)
+	./$(TARGET)
 
 clean:
 	$(RM_CMD)
