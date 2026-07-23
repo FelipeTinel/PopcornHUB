@@ -21,13 +21,16 @@ SRCS = src/main_console.cpp \
        src/containers/binary_tree.cpp
 
 TARGET_DIR = build
-TARGET = $(TARGET_DIR)/ecv_terminal
 
 ifeq ($(OS),Windows_NT)
+    EXE_EXT = .exe
     RM_CMD = if exist $(TARGET_DIR) rmdir /s /q $(TARGET_DIR)
 else
+    EXE_EXT =
     RM_CMD = rm -rf $(TARGET_DIR)
 endif
+
+TARGET = $(TARGET_DIR)/ecv_terminal$(EXE_EXT)
 
 .PHONY: all run clean
 
