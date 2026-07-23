@@ -26,10 +26,10 @@ int main() {
 
     // Arquivos persistentes reais do projeto (pasta data/), diferente dos
     // arquivos de teste usados em tests/test_ui.cpp.
-    UserManager user_manager{"../data/users_data.txt"};
-    ContentManager content_manager{"../data/contents_data.txt"};
-    CommentManager comment_manager{"../data/comments_data.txt"};
-    GenreManager genre_manager{"../data/genres_data.txt"};
+    UserManager user_manager{"data/users_data.txt"};
+    ContentManager content_manager{"data/contents_data.txt"};
+    CommentManager comment_manager{"data/comments_data.txt"};
+    GenreManager genre_manager{"data/genres_data.txt"};
 
     user_manager.load_data(users);
     content_manager.load_data(contents);
